@@ -1,26 +1,218 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Gladwin.dev design tokens.
+ *
+ * This file is the single source of truth for every colour, spacing, border,
+ * radius, and type value in the application. No other file may restate these
+ * values, and no component may contain a raw colour literal.
+ *
+ * Colours are authored in hex because hex is inside the sRGB gamut by
+ * construction. The OKLCH value in each comment is a measured description of
+ * the hex, not an alternative source. Authoring directly in OKLCH does not
+ * work here: values such as oklch(0.813 0.165 75) fall outside sRGB and clamp
+ * to a red-orange rather than the intended amber.
+ *
+ * Every contrast ratio quoted below was computed, not estimated.
+ */
+
+@theme {
+  /* ---------------------------------------------------------------------
+   * Surfaces — dark only, four elevation steps, no pure black.
+   * Elevation is expressed by surface role; drop shadows are not used.
+   * ------------------------------------------------------------------ */
+  --color-surface: #0b0c0e; /* oklch(0.154 0.005 264) — page base */
+  --color-surface-raised: #131519; /* oklch(0.195 0.009 264) — cards */
+  --color-surface-inset: #1a1d22; /* oklch(0.230 0.011 261) — code, inputs */
+  --color-surface-overlay: #22262c; /* oklch(0.267 0.013 258) — top layer */
+
+  /* ---------------------------------------------------------------------
+   * Text — three roles, each >= 4.5:1 on all four surfaces.
+   *   on surface → surface-overlay
+   *   text:          16.24 → 12.61
+   *   text-secondary: 8.77 →  6.81
+   *   text-muted:     5.92 →  4.60
+   * ------------------------------------------------------------------ */
+  --color-text: #e8eaed; /* oklch(0.936 0.005 258) */
+  --color-text-secondary: #a8aeb8; /* oklch(0.749 0.016 261) */
+  --color-text-muted: #868e9a; /* oklch(0.644 0.020 258) */
+
+  /* ---------------------------------------------------------------------
+   * Accent — amber, and the only accent family.
+   * Reserved for content that is actionable, active, focused, or live.
+   * Not a general-purpose highlight.
+   *   on-accent on accent: 10.70
+   *   accent on accent-subtle: 7.57
+   * ------------------------------------------------------------------ */
+  --color-accent: #ffb020; /* oklch(0.813 0.165 75) */
+  --color-accent-hover: #ffc24d; /* oklch(0.849 0.147 80) */
+  --color-accent-subtle: #3a2a0e; /* oklch(0.297 0.048 79) */
+  --color-on-accent: #0b0c0e; /* oklch(0.154 0.005 264) */
+
+  /* ---------------------------------------------------------------------
+   * Status hues.
+   *
+   * WARNING SITS CLOSE TO ACCENT: warning is OKLCH hue 93, accent is hue 75.
+   * Only 18 degrees apart. Tone must therefore never be the sole
+   * distinguishing channel for a state — StatusIndicator always renders a
+   * distinct shape plus a caller-supplied text label, so the pair stays
+   * separable in greyscale.
+   * ------------------------------------------------------------------ */
+  --color-success: #3dd68c; /* oklch(0.779 0.165 157) — 10.43 → 8.10 */
+  --color-warning: #d9b310; /* oklch(0.778 0.157 93)  —  9.70 → 7.53 */
+  --color-destructive: #f0616d; /* oklch(0.677 0.176 18) — 6.18 → 4.80 */
+  --color-info: #58a6ff; /* oklch(0.715 0.152 253) —  7.75 → 6.02 */
+
+  /* ---------------------------------------------------------------------
+   * Borders — all hairlines, 1px. Emphasis changes colour, never width.
+   *
+   * `border` is decorative: 1.36:1 on surface, below the 3:1 WCAG asks of a
+   * boundary that conveys information. It is acceptable only because a card's
+   * own surface region — not the border — carries the grouping.
+   *
+   * `border-strong` carries the real guarantee at 3.55:1 on surface, 3.32:1 on
+   * surface-raised, 3.07:1 on surface-inset. It reaches only 2.76:1 on
+   * surface-overlay, so it is restricted by rule to the three lower surfaces
+   * and is never used for an interactive boundary on an overlay.
+   * ------------------------------------------------------------------ */
+  --color-border: #262a31; /* oklch(0.284 0.014 262) — decorative hairline */
+  --color-border-strong: #66696e; /* oklch(0.520 0.009 261) — interactive */
+
+  /* ---------------------------------------------------------------------
+   * Spacing — 4px base. Layout gaps and padding use these steps only.
+   * ------------------------------------------------------------------ */
+  --spacing: 0.25rem;
+
+  /* ---------------------------------------------------------------------
+   * Radii — three steps, capped at 6px. No pill or fully rounded shape
+   * exists in this system, so `rounded-full` is never a token.
+   * ------------------------------------------------------------------ */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+
+  /* ---------------------------------------------------------------------
+   * Type scale — rem sizes, each step carrying its own line height and
+   * letter spacing so a step cannot be applied with a mismatched pairing.
+   * Only `label` has positive letter spacing.
+   * ------------------------------------------------------------------ */
+  --text-display: 2.5rem;
+  --text-display--line-height: 1.1;
+  --text-display--letter-spacing: -0.02em;
+
+  --text-title: 1.5rem;
+  --text-title--line-height: 1.25;
+  --text-title--letter-spacing: -0.01em;
+
+  --text-heading: 1.125rem;
+  --text-heading--line-height: 1.35;
+  --text-heading--letter-spacing: 0;
+
+  --text-body: 1rem;
+  --text-body--line-height: 1.65;
+  --text-body--letter-spacing: 0;
+
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.5;
+  --text-small--letter-spacing: 0;
+
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.4;
+  --text-label--letter-spacing: 0.06em;
+
+  --text-code: 0.8125rem;
+  --text-code--line-height: 1.6;
+  --text-code--letter-spacing: 0;
+
+  /* ---------------------------------------------------------------------
+   * Content width. Provisional: the exact maximum reading width is better
+   * chosen against real case-study content than against placeholder text.
+   * ------------------------------------------------------------------ */
+  --container-prose: 68rem;
+  --container-wide: 80rem;
 }
 
+/*
+ * Font families are the one exception to plain `@theme`, and they are scoped
+ * deliberately to these two lines. They must reference `next/font` variables
+ * that do not exist until the root layout module evaluates, so their values
+ * have to resolve at use time rather than being captured when the theme is
+ * declared. That is what `inline` does here.
+ */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans:
+    var(--font-plex-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono:
+    var(--font-plex-mono), ui-monospace, SFMono-Regular, "SF Mono", Menlo,
+    Consolas, "Liberation Mono", monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  /*
+   * `color-scheme: dark` is load-bearing for a dark-only system: it makes the
+   * canvas, scrollbars, and native control internals render dark instead of
+   * flashing a light surface. There is no light theme and no
+   * `prefers-color-scheme` branch anywhere in this project.
+   */
+  html {
+    color-scheme: dark;
+    background-color: var(--color-surface);
+  }
+
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /*
+   * Focus uses `outline` rather than `box-shadow` so the ring is drawn
+   * outside the element box and stays visible on an accent-filled button
+   * without needing a second colour. `:focus-visible` rather than `:focus`
+   * so a mouse press does not leave a persistent ring.
+   */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /*
+   * Visually hidden until focused. Uses clip-path rather than an off-screen
+   * offset so revealing it on focus causes no layout shift.
+   */
+  .skip-link {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .skip-link:focus {
+    position: fixed;
+    top: var(--spacing-4);
+    left: var(--spacing-4);
+    z-index: 100;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip-path: none;
+    padding: var(--spacing-2) var(--spacing-4);
+    background-color: var(--color-accent);
+    color: var(--color-on-accent);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: var(--text-small);
+    line-height: var(--text-small--line-height);
+  }
 }

@@ -1,0 +1,20 @@
+key,name,category,aliases
+arduino,Arduino,platform,
+aws,AWS,platform,Amazon Web Services | AWS Cloud | AWS Cloud Quest
+c-plus-plus,C++,language,
+flutter,Flutter,framework,
+google-cloud,Google Cloud,platform,GCP | Google Cloud Platform
+iot,IoT,field,Internet of Things
+java,Java,language,
+microsoft-azure,Microsoft Azure,platform,Azure
+mysql,MySQL,database,
+next-js,Next.js,framework,NextJS
+openai-whisper,OpenAI - Whisper,model,Whisper
+postgresql,PostgreSQL,database,Postgres
+python,Python,language,
+raspberry-pi,Raspberry Pi,platform,RPi
+react-js,React.js,library,React | ReactJS
+redux,Redux,library,
+spring,Spring,framework,Spring Framework
+spring-boot,Spring Boot,framework,
+version-control-systems,Version Control Systems,practice,Version Control

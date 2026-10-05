@@ -1,0 +1,42 @@
+schema: spec-driven
+
+context: |
+  Gladwin.dev — personal portfolio / resume site for Gladwin Ferdz Del Rosario,
+  Full Stack Developer & Cloud Engineer.
+
+  Stack (pinned, do not change in this repo without an explicit change):
+  - Next.js 16.3.8, App Router, TypeScript 5, React 19.2.8
+  - Tailwind CSS v4 via @tailwindcss/postcss. There is NO tailwind.config.js —
+    all theme configuration is CSS-first in app/globals.css via @theme / @theme inline.
+  - ESLint 9 flat config (eslint-config-next 16.3.8); `npm run lint`
+  - next/font for typography. npm package scope is minimal (no component library yet).
+
+  This repo is a rewrite of an older portfolio at ../glides-dev (Next 15 + shadcn/ui
+  default neutral OKLCH theme, Radix, framer-motion, papaparse CSV loading, ~70 hardcoded
+  Tailwind palette classes in lib/style-utils.ts). That repo is the visual direction
+  being REPLACED, not code to port.
+
+  Authoritative Next.js reference is node_modules/next/dist/docs/ — this Next version has
+  breaking changes versus training data. Read the relevant guide before writing code.
+
+  Content data currently lives outside this repo at
+  ../data for portfolio/{projects,experiences,certifications}.csv. Data loading is
+  deliberately NOT part of the design-system foundation change.
+
+rules:
+  proposal:
+    - Always include an explicit "Non-goals" section naming deferred features.
+    - State design decisions as decisions, not options.
+  design:
+    - Specify every design token as a concrete value with its OKLCH or hex fallback.
+    - Name the exact file path each token or primitive is defined in.
+    - Justify any new runtime dependency; prefer zero new dependencies.
+  tasks:
+    - Order tasks so the build is green after each numbered group.
+    - Include an explicit verification task (npm run lint, npm run build, tsc --noEmit).
+
+operations:
+  apply:
+    guidance:
+      - Keep the design system free of business/content logic; primitives stay presentational.
+      - Verify with npm run lint and npm run build before reporting done.
