@@ -2,7 +2,6 @@ import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -10,6 +9,8 @@ import {
 import { TokenChipList } from '@/components/sections/chip';
 import { domainLabel } from '@/lib/content/schema';
 import type { CaseStudy } from '@/lib/content/model';
+import { ReadableDescription } from '@/components/ui/readable-description';
+import { CaseStudyHint } from '@/components/ui/case-study-hint';
 
 /**
  * One case study, as a card in the archive grid.
@@ -32,12 +33,13 @@ export function CaseStudyCard({ caseStudy }: { caseStudy: CaseStudy }) {
   const domainLabels = caseStudy.domains.map(domainLabel);
 
   return (
-    <Card labelledBy={titleId}>
+    <Card labelledBy={titleId} className="relative group">
+      <CaseStudyHint />
       <CardHeader>
         <CardTitle id={titleId} level={3}>
           {caseStudy.title}
         </CardTitle>
-        <CardDescription>{caseStudy.description}</CardDescription>
+        <ReadableDescription description={caseStudy.description} />
       </CardHeader>
 
       <CardContent>

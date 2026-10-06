@@ -13,7 +13,7 @@ import type { ContentModel } from '@/lib/content/model';
 import type { Derivation } from '@/lib/content/derive';
 
 /** How many arguments a command accepts. */
-export type CommandArity = 'none' | 'one';
+export type CommandArity = 'none' | 'one' | 'optional' | 'any';
 
 /**
  * Where a command is resolved.

@@ -3,9 +3,7 @@
 Presents the owner's education and twenty recorded experiences as operational history: two
 timelines grouped by the kind of work, each entry showing what was operated and with what,
 rather than a list of titles and employers.
-
 ## Requirements
-
 ### Requirement: The background route presents both timelines
 The system SHALL provide a `/background` route presenting an education timeline and an
 experience timeline, and SHALL add exactly one entry for that route to the shared
@@ -33,32 +31,30 @@ the number of navigation items does not depend on how many are recorded.
 - **THEN** the route renders, states that nothing is recorded for that timeline, and presents no entry
 
 ### Requirement: Entries are ordered by recency with a total order
-Each timeline SHALL order its entries by the end of the stated period, most recent first, and an entry whose period is still open SHALL be treated as more recent than every entry that has ended. Ties SHALL be broken so that the order does not depend on the order rows appear in the content file.
+Each timeline SHALL order its entries by the end of the stated period, most recent first, and an entry whose period is still open (such as Student Volunteer at Java User Groups Philippines) SHALL be treated as more recent than every entry that has ended. Ended roles (including Dayforce IT Service Desk Intern, CyberPH Vice President for Operations, DEVCON Manila Program Manager, GDSC PUP Mobile Developer, and KakaComputer Field Ambassador) SHALL be ordered chronologically by verified completion date. Ties SHALL be broken so that the order does not depend on the order rows appear in the content file.
 
 #### Scenario: Most recent comes first
-
-- **WHEN** a timeline holds entries whose periods end in different years
+- **WHEN** a timeline holds entries whose periods end in different years or months
 - **THEN** the entry whose period ended last is presented first
 
 #### Scenario: An open period outranks a finished one
-
-- **WHEN** one entry's period is still open and another's ended
+- **WHEN** one entry's period is still open (e.g., Student Volunteer at Java User Groups PH) and another's ended
 - **THEN** the entry with the open period is presented first
 
 #### Scenario: Entries sharing a period keep a stable order
-
 - **WHEN** two entries end in the same period
 - **THEN** their relative order is decided by a stated secondary comparison rather than by their order in the content file, and it is the same on every build
 
 #### Scenario: Reordering the content file does not reorder the timeline
-
 - **WHEN** the rows of a timeline's content source are rearranged without changing any value
 - **THEN** the timeline presents the same entries in the same order
 
-### Requirement: Entries are grouped by the kind of work they represent
-Each experience SHALL declare which kind of work it represents, from a declared set, and
-the experience timeline SHALL group entries by that declaration. An entry declaring none
-SHALL still be presented, in a group that does not claim a kind for it. The experience timeline SHALL present all five declared kinds. Its introduction SHALL state the unclassified remainder rather than implying the grouping is complete.
+### Requirement: Entries are grouped into professional, hackathons, and organizations
+Each experience SHALL declare which kind of work it represents, and the `/background` route SHALL present experiences in three distinct sections: Professional Experience, Hackathons & Competitions, and Organizations & Community. Each category SHALL have its own dedicated semantic `<section>` element, heading, and description.
+
+#### Scenario: Categorized experiences presentation
+- **WHEN** a visitor views the experiences section on the background route
+- **THEN** experiences are rendered in separate semantic sections for Professional Experience, Hackathons & Competitions, and Organizations & Community
 
 #### Scenario: Entries sharing a kind are grouped together
 
@@ -79,7 +75,6 @@ SHALL still be presented, in a group that does not claim a kind for it. The expe
 
 - **WHEN** the timeline is rendered
 - **THEN** its groups appear in one stated order, and that order does not change when a kind's name would sort differently
-
 
 #### Scenario: The unclassified count is stated in the introduction
 
@@ -197,3 +192,4 @@ for it.
 
 - **WHEN** an experience's role title is corrected
 - **THEN** its segment is unchanged, and links to it keep working
+

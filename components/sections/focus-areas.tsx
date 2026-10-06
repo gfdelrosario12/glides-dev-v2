@@ -33,7 +33,7 @@ export function FocusAreas() {
           Certifications
         </h2>
         <p className="max-w-prose text-body text-text-secondary">
-          A compact register of the platforms, systems, and practices I have studied.
+          A compact register of verified platforms, cloud environments, and technical credentials.
         </p>
       </div>
 
@@ -44,7 +44,7 @@ export function FocusAreas() {
       ) : (
         <ul className="grid gap-4 lg:grid-cols-3">
           {certifications.map((certification) => (
-            <li key={certification.slug} className="min-w-0">
+            <li key={certification.slug} className="min-w-0 w-full max-w-xl mx-auto lg:max-w-none">
               <CredentialCard {...credentialCardProps(certification, asOf)} />
             </li>
           ))}

@@ -58,8 +58,14 @@ export function CardTitle({ id, level = 3, className, children }: CardTitleProps
   );
 }
 
-export function CardDescription({ children }: { children: React.ReactNode }) {
-  return <p className="wrap-anywhere text-small text-text-secondary">{children}</p>;
+export interface CardDescriptionProps {
+  className?: string;
+  as?: 'p' | 'div';
+  children: React.ReactNode;
+}
+
+export function CardDescription({ as: Component = 'p', className, children }: CardDescriptionProps) {
+  return <Component className={cn("wrap-anywhere text-small text-text-secondary", className)}>{children}</Component>;
 }
 
 export function CardContent({ children }: { children: React.ReactNode }) {

@@ -79,6 +79,7 @@ export function credentialCardProps(certification: Certification, asOf: ContentD
     destination: certification.verificationUrl,
     destinationLabel: destinationLabelFor(certification),
     skills: certification.skills,
+    credentialId: certification.credentialId,
   } as const;
 }
 

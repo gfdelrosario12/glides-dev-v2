@@ -3,7 +3,7 @@
 import { useTerminal } from './terminal-context';
 import { buttonClasses } from '@/components/ui/button';
 
-const SUGGESTIONS = ['help', 'projects', 'experiences', 'open cv', 'clear'];
+const SUGGESTIONS = ['help', 'whoami', 'projects', 'certifications', 'experience', 'clear'];
 
 export function TerminalSuggestions() {
   const { submit, busy } = useTerminal();

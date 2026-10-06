@@ -2,21 +2,16 @@ import type { Metadata as NextMetadata } from 'next';
 
 import { EducationEntry } from '@/components/background/education-entry';
 import { ExperienceEntry } from '@/components/background/experience-entry';
-import { ExperienceGroup } from '@/components/background/experience-group';
 import { Timeline, type TimelineEntry } from '@/components/background/timeline';
 import { formatDateRange } from '@/lib/content/date';
-import { DERIVED } from '@/lib/content/derive';
 import {
   educationInRecencyOrder,
-  experiencesByTrack,
+  experiencesInRecencyOrder,
   type Experience,
-  type ExperienceTrackGroup,
 } from '@/lib/content/model';
 import {
   EXPERIENCE_SCHEMA,
   QUALIFICATION_SCHEMA,
-  UNCLASSIFIED_TRACK_LABEL,
-  trackLabel,
 } from '@/lib/content/schema';
 import { CONTENT_GUTTER, SECTION_RHYTHM } from '@/lib/layout';
 
@@ -87,19 +82,15 @@ function entryOf(experience: Experience): TimelineEntry {
  * has to be a valid fragment for `aria-labelledby`, and the display label is a
  * phrase with spaces in it.
  */
-function groupKeyOf(group: ExperienceTrackGroup): string {
-  return group.track ?? 'unclassified';
-}
-
-function groupLabelOf(group: ExperienceTrackGroup): string {
-  return group.track === null ? UNCLASSIFIED_TRACK_LABEL : trackLabel(group.track);
-}
-
 export default function BackgroundPage() {
-  const groups = experiencesByTrack();
+  const allExperiences = experiencesInRecencyOrder();
   const study = educationInRecencyOrder();
 
-  const total = groups.reduce((count, group) => count + group.experiences.length, 0);
+  const professional = allExperiences.filter((e) => e.track === 'professional');
+  const hackathons = allExperiences.filter((e) => e.track === 'technical');
+  const organizations = allExperiences.filter(
+    (e) => e.track !== 'professional' && e.track !== 'technical',
+  );
 
   const educationEntries: TimelineEntry[] = study.map((record) => ({
     slug: record.slug,
@@ -134,44 +125,64 @@ export default function BackgroundPage() {
         {/* Experience leads and the study timeline follows: the order a visitor asks
             the question in. What has this person been doing, and how were they trained
             to do it. */}
-        <section aria-labelledby="experience-heading" className="flex flex-col gap-6">
+        {/* Professional Experience */}
+        <section id="professional-experience" aria-labelledby="professional-heading" className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
-            <h2 id="experience-heading" className="text-title font-medium text-text">
-              Experience
+            <p className="font-mono text-label uppercase tracking-[0.06em] text-accent">
+              01 // Professional Work
+            </p>
+            <h2 id="professional-heading" className="text-title font-medium text-text">
+              Professional Experience
             </h2>
-            {/*
-              The count and the classification, stated together. Most of the recorded
-              work declares no kind today, and saying so is the difference between a
-              visitor reading the grouping as complete and reading it as the author's
-              own unfinished work.
-            */}
             <p className="max-w-prose text-body text-text-secondary">
-              {total === 0
-                ? 'No experience is recorded yet.'
-                : `${total} recorded, most recent period first, grouped by the kind of work.` +
-                  (DERIVED.statistics.unclassifiedRoles === 0
-                    ? ''
-                    : ` ${DERIVED.statistics.unclassifiedRoles} of them declare no kind, and are listed last.`)}
+              Industry internships, enterprise IT service desk, and corporate infrastructure operations.
             </p>
           </div>
+          <Timeline
+            label="Professional Experience"
+            emptySource={EXPERIENCE_SCHEMA.file}
+            entries={professional.map(entryOf)}
+          />
+        </section>
 
-          {groups.length === 0 ? (
-            <Timeline label="Recorded experience" emptySource={EXPERIENCE_SCHEMA.file} entries={[]} />
-          ) : (
-            groups.map((group) => (
-              <ExperienceGroup
-                key={groupKeyOf(group)}
-                groupKey={groupKeyOf(group)}
-                label={groupLabelOf(group)}
-              >
-                <Timeline
-                  label={`${groupLabelOf(group)} experience`}
-                  emptySource={EXPERIENCE_SCHEMA.file}
-                  entries={group.experiences.map(entryOf)}
-                />
-              </ExperienceGroup>
-            ))
-          )}
+        {/* Hackathons */}
+        <section id="hackathons" aria-labelledby="hackathons-heading" className="flex flex-col gap-6">
+          <div className="flex flex-col gap-2">
+            <p className="font-mono text-label uppercase tracking-[0.06em] text-info">
+              02 // Hackathons & Engineering Sprints
+            </p>
+            <h2 id="hackathons-heading" className="text-title font-medium text-text">
+              Hackathons & Competitions
+            </h2>
+            <p className="max-w-prose text-body text-text-secondary">
+              Technical hackathons, blockchain dApps, product management, and sprint engineering.
+            </p>
+          </div>
+          <Timeline
+            label="Hackathons & Competitions"
+            emptySource={EXPERIENCE_SCHEMA.file}
+            entries={hackathons.map(entryOf)}
+          />
+        </section>
+
+        {/* Organizations */}
+        <section id="organizations" aria-labelledby="organizations-heading" className="flex flex-col gap-6">
+          <div className="flex flex-col gap-2">
+            <p className="font-mono text-label uppercase tracking-[0.06em] text-text-muted">
+              03 // Community & Student Governance
+            </p>
+            <h2 id="organizations-heading" className="text-title font-medium text-text">
+              Organizations & Community
+            </h2>
+            <p className="max-w-prose text-body text-text-secondary">
+              Student governance, technical student clubs, developer advocate roles, and nationwide tech event operations.
+            </p>
+          </div>
+          <Timeline
+            label="Organizations & Community"
+            emptySource={EXPERIENCE_SCHEMA.file}
+            entries={organizations.map(entryOf)}
+          />
         </section>
 
         <section aria-labelledby="education-heading" className="flex flex-col gap-6">

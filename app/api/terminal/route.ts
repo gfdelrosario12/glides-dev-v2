@@ -102,7 +102,7 @@ export async function POST(request: Request): Promise<Response> {
     return json({ lines: result.lines } satisfies TerminalResponseBody, 400);
   }
 
-  const argv = argument === '' ? [] : [argument];
+  const argv = argument === '' ? [] : argument.trim().split(/\s+/);
   if (arityMismatch(command, argument)) {
     const result = arityError(command, argv.length);
     return json({ lines: result.lines } satisfies TerminalResponseBody, 400);

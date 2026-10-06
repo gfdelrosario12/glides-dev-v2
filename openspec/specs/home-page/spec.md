@@ -4,6 +4,13 @@ Defines the Gladwin.dev landing page: the direct personal introduction, profile 
 
 ## Requirements
 
+### Requirement: Long landing descriptions are readable
+The landing page SHALL present long authored descriptions as readable sentence-level content rather than dense uninterrupted paragraphs, while preserving the original wording.
+
+#### Scenario: Description readability
+- **WHEN** an experience or project description contains multiple authored thoughts
+- **THEN** the rendered content separates those thoughts into readable list items while preserving the original wording
+
 ### Requirement: The hero introduces the owner directly
 The landing page SHALL open with a hero that names the site owner and states their technical direction in their own terms, above the fold and without requiring interaction. The hero SHALL identify the owner by name and SHALL state a professional role.
 

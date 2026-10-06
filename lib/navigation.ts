@@ -72,6 +72,9 @@ export type LinkNavItem = Extract<NavItem, { kind: 'link' }>;
 export const SECTION_IDS = {
   about: 'about',
   education: 'education',
+  professionalExperience: 'professional-experience',
+  hackathons: 'hackathons',
+  organizations: 'organizations',
   focusAreas: 'focus-areas',
   statistics: 'statistics',
   featuredWork: 'featured-work',
@@ -91,8 +94,12 @@ export type SectionId = (typeof SECTION_IDS)[keyof typeof SECTION_IDS];
  */
 export const NAVIGABLE_SECTIONS: readonly { readonly id: SectionId; readonly label: string }[] = [
   { id: SECTION_IDS.about, label: 'About' },
+  { id: SECTION_IDS.professionalExperience, label: 'Experience' },
   { id: SECTION_IDS.focusAreas, label: 'Certifications' },
+  { id: SECTION_IDS.education, label: 'Education' },
   { id: SECTION_IDS.projects, label: 'Projects' },
+  { id: SECTION_IDS.hackathons, label: 'Hackathons' },
+  { id: SECTION_IDS.organizations, label: 'Community' },
 ];
 
 /** A fragment link to a landing-page section. */
@@ -117,20 +124,11 @@ export const TERMINAL_ACTION = {
 } as const satisfies Extract<NavItem, { kind: 'action' }>;
 
 export const PRIMARY_NAV: readonly NavItem[] = [
-  { kind: 'link', href: '/', label: 'Home' },
   ...NAVIGABLE_SECTIONS.map(({ id, label }) => ({
     kind: 'link' as const,
     href: sectionHref(id),
     label,
   })),
-  // One entry for the credential vault, and never one per credential — the same rule
-  // the case-studies archive follows, for the same reason: the navigation item count
-  // must not depend on how many records a collection holds.
-  { kind: 'link', href: '/credentials', label: 'Credentials' },
-  // One entry for the background, and never one per experience or qualification.
-  // Twenty roles and three records of study would otherwise add twenty-three
-  // navigation items, which is how a navigation stops being a navigation.
-  { kind: 'link', href: '/background', label: 'Background' },
   { kind: 'link', href: '/connect', label: 'Connect' },
 ];
 

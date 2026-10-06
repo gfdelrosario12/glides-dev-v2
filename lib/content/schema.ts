@@ -200,6 +200,8 @@ export const UNCLASSIFIED_TRACK_LABEL = 'Unclassified';
 /** Badge labels present in the data. */
 export const BADGE_LABELS = [
   'Internship',
+  'Academic Internship',
+  'Voluntary Internship',
   'Leadership',
   'Member',
   'Membership',
@@ -236,7 +238,21 @@ export type TechnologyCategory = (typeof TECHNOLOGY_CATEGORIES)[number];
  * or filter by platform without matching on a label, and so a typo in a platform
  * name fails the build instead of producing a chip that says "githb".
  */
-export const SOCIAL_PLATFORMS = ['github', 'linkedin', 'linktree', 'email'] as const;
+export const SOCIAL_PLATFORMS = [
+  'github',
+  'linkedin',
+  'facebook',
+  'twitter',
+  'discord',
+  'instagram',
+  'medium',
+  'youtube',
+  'tiktok',
+  'email',
+  'website',
+  'devsite',
+  'linktree',
+] as const;
 export type SocialPlatform = (typeof SOCIAL_PLATFORMS)[number];
 
 /* ------------------------------------------------------------------ *
@@ -711,7 +727,7 @@ export const EXPERIENCE_SCHEMA: CollectionSchema = {
     endDate: { kind: 'date', optional: true },
     location: { kind: 'text' },
     /**
-     * The operational account, in the first person: what was actually done.
+     * The operational account of the role: what was actually executed.
      *
      * This is what the timeline presents as the work itself. It is transcribed as
      * written and never summarised or reworded.

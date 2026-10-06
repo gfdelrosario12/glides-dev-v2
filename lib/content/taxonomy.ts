@@ -44,11 +44,13 @@ export const CLOUD_PROVIDER_IDS: readonly CloudProviderId[] = [
 export const CLOUD_PROVIDER_ALIASES: Readonly<Record<string, CloudProviderId>> = {
   aws: 'aws',
   'amazon web services': 'aws',
+  'amazon web services (aws)': 'aws',
   'aws cloud': 'aws',
   'aws cloud quest': 'aws',
 
   azure: 'azure',
   'microsoft azure': 'azure',
+  microsoft: 'azure',
 
   'google cloud': 'google-cloud',
   gcp: 'google-cloud',

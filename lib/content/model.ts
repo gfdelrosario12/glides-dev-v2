@@ -497,7 +497,7 @@ function readTable(schema: CollectionSchema): CsvTable {
     const newHeader = ['slug', 'track', 'title', 'organization', 'badgeLabel', 'startDate', 'endDate', 'responsibilities', 'lessonsLearned', 'tools', 'systems', 'caseStudies', 'location', 'description'];
     const newRows = table.rows.map(row => {
       const v = row.values;
-      const slug = (v.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Math.random().toString(36).substring(2, 7);
+      const slug = (v.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + row.line;
       let track = 'professional';
       if (v.type === 'organizational') track = 'leadership';
       else if (v.type === 'competetive' || v.type === 'competitive') track = 'technical';
@@ -518,7 +518,7 @@ function readTable(schema: CollectionSchema): CsvTable {
     const newHeader = ['slug', 'issuer', 'acquiredOn', 'expiration', 'description', 'verificationUrl', 'verificationKind', 'credentialId', 'skills'];
     const newRows = table.rows.map(row => {
       const v = row.values;
-      const slug = (v.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Math.random().toString(36).substring(2, 7);
+      const slug = (v.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + row.line;
       return {
         line: row.line,
         arity: 'match' as const,

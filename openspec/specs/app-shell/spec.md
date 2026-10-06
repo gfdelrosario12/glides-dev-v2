@@ -1,9 +1,7 @@
 ## Purpose
 
 Defines the global navigation and the shared page shell for Gladwin.dev — skip link, sticky header, width-constrained main column, and footer — together with the responsive layout foundation and vertical rhythm that every route and every future feature composes against.
-
 ## Requirements
-
 ### Requirement: Every route inherits the same shell
 
 The shell SHALL be applied once at the root layout, so that no route can render without it. A route SHALL NOT be able to opt out of the header, footer, or main column by omission.
@@ -70,7 +68,7 @@ The page SHALL render a visually hidden-until-focused skip link as the first foc
 
 ### Requirement: The header is sticky and identifies the site
 
-The header SHALL remain visible while the page scrolls, SHALL contain the site wordmark as the first interactive element, and SHALL contain the primary navigation. The header SHALL be separated from scrolling content by a bottom hairline border.
+The header SHALL remain visible while the page scrolls, SHALL contain the site wordmark as the first interactive element, and SHALL contain the primary navigation and hydration-safe theme switching controls. The theme toggle control SHALL synchronize state using external store subscriptions to guarantee that server-rendered HTML and client-hydrated initial markup match identically without recoverable hydration errors or cascading renders.
 
 #### Scenario: Header persists while scrolling
 
@@ -86,6 +84,11 @@ The header SHALL remain visible while the page scrolls, SHALL contain the site w
 
 - **WHEN** the header renders
 - **THEN** its bottom edge is a 1px `border` hairline, and no drop shadow is used
+
+#### Scenario: Theme toggle renders identically during initial hydration
+
+- **WHEN** the application is loaded in a browser
+- **THEN** the initial hydration markup for the theme toggle matches the server-rendered default without throwing hydration mismatches, and updates client state after mount via `useSyncExternalStore`
 
 ### Requirement: Navigation items come from one declared source
 
@@ -239,9 +242,17 @@ The shell SHALL provide a single mount point for a site-wide overlay, owned by t
 - **WHEN** the routes are inspected
 - **THEN** no route renders its own overlay or its own terminal control, and the overlay's mount point exists once in the shell
 
-### Requirement: The window bar icons and controls enforce strict visual constraints
-The system SHALL present any window controls (e.g., close, minimize, maximize) or browser chrome icons using consistent, restrained sizing. Icons SHALL NOT be arbitrarily scaled up; they must sit within adequately sized, accessible click targets while the visual stroke and dimensions remain harmonized with the rest of the typography and borders.
+### Requirement: Layout adopts mobile-first responsive architecture and safe-area boundaries
+The page shell and header SHALL adapt gracefully across viewport widths from 320px to large screens. Safe-area padding (`env(safe-area-inset-top)`, `env(safe-area-inset-bottom)`) SHALL be respected so navigation and touch targets are not obscured by device notches or gestures.
 
-#### Scenario: Verifying click target versus visual size
-- **WHEN** a user interacts with a window control on a touch device
-- **THEN** the tappable area is large enough for accessibility, but the icon itself remains visually small and proportionate
+#### Scenario: Viewing site on mobile screen
+- **WHEN** a user navigates the site on a mobile device (320px-480px width)
+- **THEN** the layout fills the viewport cleanly without horizontal overflow or clipped navigation controls
+
+### Requirement: Mobile navigation provides accessible, touch-friendly system controls
+The site header SHALL provide an intentional mobile navigation system when the viewport width is below tablet breakpoint. Navigation links SHALL have a minimum tap area of 44px by 44px, clear active states, legible numbered system indicators, and accessible keyboard dismissal.
+
+#### Scenario: Interacting with mobile menu
+- **WHEN** a user triggers the mobile navigation control
+- **THEN** a structured system menu opens with touch-friendly endpoints, and dismissing it restores focus properly
+

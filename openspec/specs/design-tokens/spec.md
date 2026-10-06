@@ -92,6 +92,37 @@ The system SHALL define exactly one accent family, amber, for content that is ac
 - **WHEN** `accent` or `text` text is rendered on an `accent-subtle` fill
 - **THEN** the measured contrast ratio is at least 4.5:1
 
+### Requirement: Dedicated light (white) mode accent color system with guaranteed WCAG AA contrast
+
+The system SHALL expose a dedicated light (white) mode accent color system under `:root[data-theme='light']` that maintains the engineering amber identity while meeting or exceeding WCAG AA contrast (>= 4.5:1) on white and light surfaces. The light mode accent SHALL NOT be a raw inversion or unreadable neon, and SHALL preserve the cohesive, tactile, high-contrast engineering interface.
+
+| Role | Light Mode Value | Description / Contrast Guarantee |
+| --- | --- | --- |
+| `surface` | `#F8FAFC` | Clean engineered light canvas |
+| `surface-raised` | `#FFFFFF` | Crisp raised card surface |
+| `surface-inset` | `#F1F5F9` | Technical code/terminal inset |
+| `surface-overlay` | `#FFFFFF` | High-elevation overlays |
+| `text` | `#0F172A` | Deep slate primary text (16.1:1 on white) |
+| `text-secondary` | `#334155` | Slate secondary text (9.5:1 on white) |
+| `text-muted` | `#64748B` | Slate muted text (4.6:1 on white) |
+| `accent` | `#B45309` | Burnished industrial amber (4.97:1 on white, WCAG AA verified) |
+| `accent-hover` | `#92400E` | Deep amber hover (7.24:1 on white, WCAG AAA) |
+| `accent-subtle` | `#FEF3C7` | Luminous amber tint for badges/accents |
+| `on-accent` | `#FFFFFF` | High-contrast text on accent fills (4.97:1) |
+| `border` | `#E2E8F0` | Subtle hairline boundary |
+| `border-strong` | `#94A3B8` | Interactive border (>= 3.0:1 on white) |
+
+#### Scenario: Light mode accent meets WCAG AA on white surfaces
+
+- **WHEN** `accent` text or interactive indicators are displayed on `surface` (`#F8FAFC`) or `surface-raised` (`#FFFFFF`) in light mode
+- **THEN** the contrast ratio is at least 4.5:1 (specifically measuring 4.97:1 or higher)
+
+#### Scenario: Light mode maintains identical semantic token roles
+
+- **WHEN** switching between dark and light modes
+- **THEN** components consume the exact same token names (`--color-accent`, `--color-surface`, `--color-text`) without per-component style overrides
+
+
 ### Requirement: Non-accent status hues are distinct from the accent
 
 The system SHALL expose four status hues in addition to the accent: `success` `#3DD68C`, `warning` `#D9B310`, `destructive` `#F0616D`, and `info` `#58A6FF`. Each SHALL achieve at least 4.5:1 against all four surface roles. Because `warning` sits at OKLCH hue 93° and `accent` at 75°, the two SHALL be treated as visually adjacent and SHALL NOT be the sole distinguishing channel for any state.

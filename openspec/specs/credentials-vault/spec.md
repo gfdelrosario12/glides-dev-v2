@@ -1,33 +1,24 @@
 ## Purpose
 
 Presents the owner's recorded credentials as a listing and a set of detail pages that a visitor can inspect and check, with verification state stated honestly rather than implied by an unlabelled link.
-
 ## Requirements
-
 ### Requirement: The vault lists every recorded credential
-The system SHALL provide a `/credentials` route that presents every credential in the
-content model, in a single declared order, and SHALL add exactly one entry for that route
-to the shared navigation definition. Individual credential pages SHALL NOT appear in the
-navigation, so the number of navigation items does not depend on the number of
-credentials.
+
+The system SHALL provide a `/credentials` route that presents every credential in the content model, in a single declared order, and SHALL add exactly one entry for that route to the shared navigation definition. The repository SHALL include all authoritative certificates, including Computer Systems Servicing NC2 (TESDA) and IBM Full Stack Software Developer Professional Certificate (Coursera), with dedicated static routes generated under `/credentials/[slug]`. Individual credential pages SHALL NOT appear in the primary navigation.
 
 #### Scenario: Every recorded credential is listed
-
 - **WHEN** the `/credentials` route is rendered
 - **THEN** every credential in the content model appears exactly once, in the declared order
 
 #### Scenario: Navigation names the vault once
-
 - **WHEN** the shared navigation definition is inspected
 - **THEN** it contains one entry whose destination is the vault, and no entry whose destination is a credential address
 
 #### Scenario: Adding a credential adds no navigation item
-
-- **WHEN** a seventh credential is recorded
+- **WHEN** an additional credential is recorded in `content/certifications.csv`
 - **THEN** it appears on the listing and the navigation item count is unchanged
 
 #### Scenario: An empty content model yields an empty page, not an error
-
 - **WHEN** the `/credentials` route is rendered and the content model records no credential
 - **THEN** the page renders, states that none are recorded, and presents no card
 
@@ -78,32 +69,19 @@ that no longer resolves SHALL produce the same not-found response.
 - **WHEN** the credential detail page is rendered
 - **THEN** the whole credential is present in the initial response and no credential field is shipped to a client bundle
 
-### Requirement: Verification state is stated, not implied by an unlabelled link
-Each credential SHALL declare whether its recorded verification destination identifies
-that credential specifically or the owner's profile listing. The page SHALL label the
-destination accordingly, so a link to a profile is never presented as verification of
-the credential. The system SHALL NOT present a verification claim for a credential whose
-content declares none.
+### Requirement: Verification state and dual verification routing
+Each credential SHALL declare its verified destination and provide dual action buttons:
+1. `LinkedIn` destination routing to the owner's LinkedIn credentials repository (`https://www.linkedin.com/in/gladwindr/details/certifications/`).
+2. `Check Verification` destination routing to the issuing authority's verification URL (e.g. Coursera direct verification, Appkademiya verification, Credly badge URL, or LinkedIn profile fallback).
+The destination URL SHALL also be rendered as text to allow visitors to inspect the issuing domain directly without clicking.
 
-#### Scenario: A direct destination is labelled as verification
+#### Scenario: Dual verification routing
+- **WHEN** a credential card is rendered
+- **THEN** it displays both "LinkedIn" and "Check Verification" buttons linking externally with secure attributes (`target="_blank" rel="noopener noreferrer"`)
 
-- **WHEN** a credential declares a destination identifying that credential
-- **THEN** the page presents it as a destination to verify the credential
-
-#### Scenario: A profile destination is labelled as the profile
-
-- **WHEN** a credential declares a destination identifying the owner's profile listing rather than the credential
-- **THEN** the page presents it as a destination to the owner's profile, and does not describe it as verifying that credential
-
-#### Scenario: An undeclared verification claim is not made
-
-- **WHEN** a credential declares no verification destination
-- **THEN** the page presents no verification destination and no verified state
-
-#### Scenario: The destination leaves the site and says so
-
+#### Scenario: The destination leaves the site and displays raw URL
 - **WHEN** a verification destination is presented
-- **THEN** it opens in a new browsing context and states that it does, and its address is available as text rather than as a hidden link target
+- **THEN** it opens in a new browsing context and states that it does, and its address is visible as text rather than hidden behind a link label alone
 
 ### Requirement: Verification state is legible without colour
 A credential's verification state SHALL be presented as a shape plus a visible text
@@ -176,3 +154,4 @@ the vocabulary SHALL fail the build naming the file, the record, and the offendi
 
 - **WHEN** a credential declares one skill outside the vocabulary beside valid ones
 - **THEN** the build names the invalid one, and the record's valid skills are not what caused the failure
+

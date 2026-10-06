@@ -2,6 +2,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Metadata, MetadataList } from '@/components/ui/metadata';
 import { TokenChipList } from '@/components/sections/chip';
 import Link from 'next/link';
+import { ReadableDescription } from '@/components/ui/readable-description';
+import { CaseStudyHint } from '@/components/ui/case-study-hint';
 
 /**
  * One recorded experience, presented as an operational record.
@@ -67,6 +69,7 @@ export function ExperienceEntry({
 }: ExperienceEntryProps) {
   return (
     <Card labelledBy={titleId} className="relative group hover:border-accent/50 transition-colors">
+      <CaseStudyHint />
       <CardHeader>
         {/* The role leads and the organisation follows, in that order in the
             markup: a visitor scanning twenty entries is looking for what someone
@@ -85,7 +88,7 @@ export function ExperienceEntry({
         </MetadataList>
 
         {/* The account of the work, as written. */}
-        <p className="text-body text-text-secondary">{description}</p>
+        <ReadableDescription description={description} className="text-body text-text-secondary" />
 
         {responsibilities.length > 0 ? (
           <div className="flex flex-col gap-2">

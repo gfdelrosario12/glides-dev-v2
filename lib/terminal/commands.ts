@@ -14,10 +14,10 @@
  * project does not have yet. See design decision D6.
  */
 
-import { PROFILE, SECONDARY_ACTIONS } from '@/content/site';
-import { SECTION_IDS, SOCIAL_LINKS } from '@/lib/navigation';
+import { PROFILE } from '@/content/site';
+import { SECTION_IDS } from '@/lib/navigation';
 import { formatDateRange } from '@/lib/content/date';
-import { DECLARED_COMMANDS, findDeclaration, serverDeclarations, sessionDeclarations } from './registry';
+import { DECLARED_COMMANDS, findDeclaration } from './registry';
 import type { Command, CommandResult, ResolveContext } from './types';
 
 type Resolve = (argv: readonly string[], context: ResolveContext) => CommandResult;
@@ -28,20 +28,8 @@ function lines(...output: readonly string[]): CommandResult {
 }
 
 /** Left-align a label into a fixed column, so output reads as a table. */
-function row(label: string, value: string, width = 22): string {
+function row(label: string, value: string, width = 14): string {
   return `${label.padEnd(width)}${value}`;
-}
-
-/**
- * Every technology record in use, as names.
- *
- * Reads the resolved records rather than re-deriving anything from text, so this
- * list and the `technologies` figure in `status` are two views of one set. While
- * the stacks were free text this command and the figure each normalised
- * separately and could drift; they no longer can.
- */
-function technologiesInUse(context: ResolveContext): readonly string[] {
-  return context.derived.technologiesInUse.map((technology) => technology.name);
 }
 
 /**
@@ -67,9 +55,6 @@ function editDistance(a: string, b: string): number {
 /**
  * The closest declared name to what was typed: a prefix match if there is one,
  * otherwise the nearest name within a plausible edit distance.
- *
- * A long unrelated word gets no suggestion rather than a bad one, because
- * "did you mean" on a word nothing resembles is worse than the command list.
  */
 export function suggestCommand(typed: string, candidates: readonly string[]): string | null {
   const needle = typed.toLowerCase();
@@ -89,43 +74,224 @@ export function suggestCommand(typed: string, candidates: readonly string[]): st
 
 const RESOLVERS: Readonly<Record<string, Resolve>> = {
   whoami: () =>
-    lines(row('name', PROFILE.name), row('role', PROFILE.role), '', PROFILE.summary),
+    lines(
+      row('name:', PROFILE.name, 12),
+      row('role:', PROFILE.role, 12),
+      row('focus:', 'Infrastructure · Cloud · Cybersecurity · Operations', 12),
+      '',
+      PROFILE.summary,
+    ),
 
-  about: () => lines(...PROFILE.biography),
+  about: () => {
+    const output: string[] = [];
+    PROFILE.biography.forEach((paragraph, idx) => {
+      output.push(paragraph);
+      if (idx < PROFILE.biography.length - 1) output.push('');
+    });
+    return lines(...output);
+  },
 
-  ls: (_argv, context) =>
+  ls: () =>
     lines(
       'sections/',
       ...Object.values(SECTION_IDS).map((id) => `  ${id}`),
       '',
       'routes/',
       '  /',
-      '  /design-tokens',
+      '  /connect',
       '',
-      `case-studies/ (${context.derived.publishedCaseStudies.length} published)`,
-      ...context.content.caseStudies.map(
-        (caseStudy) =>
-          `  ${caseStudy.slug}${caseStudy.status === 'published' ? '' : '  (draft)'}`,
-      ),
+      'files/',
+      '  about.txt           contact.json',
+      '  experience.txt      projects.txt',
+      '  skills.txt          certifications.txt',
+      '  README.md',
+      '',
+      'Use `cat <file>` to inspect files, `open <slug>` for project studies.',
     ),
+
+  pwd: () => lines('/home/gladwin/portfolio'),
+
+  hostname: () => lines('gladwin-workstation'),
+
+  uname: (argv) => {
+    if (argv.includes('-a') || argv.includes('-all')) {
+      return lines('Linux gladwin-workstation 6.8.0-45-generic #45-Ubuntu SMP PREEMPT_DYNAMIC x86_64 GNU/Linux');
+    }
+    return lines('Linux');
+  },
+
+  echo: (argv) => lines(argv.join(' ')),
+
+  cat: (argv, context) => {
+    const file = argv[0]?.toLowerCase();
+    switch (file) {
+      case 'about.txt':
+      case 'about':
+        return lines(
+          '=== Gladwin Ferdz Del Rosario ===',
+          PROFILE.role,
+          '',
+          ...PROFILE.biography,
+        );
+      case 'contact.json':
+      case 'contact': {
+        const email =
+          context.content.socialLinks
+            .find((l) => l.platform === 'email')
+            ?.href.replace('mailto:', '') ?? 'gladwin.delrosario.organizations@gmail.com';
+        return lines(
+          '{',
+          `  "name": "${PROFILE.name}",`,
+          `  "role": "${PROFILE.role}",`,
+          `  "email": "${email}",`,
+          '  "location": "Philippines",',
+          '  "portfolio": "https://gladwin.dev"',
+          '}',
+        );
+      }
+      case 'skills.txt':
+      case 'skills': {
+        const list = context.content.technologies.map((t) => t.name).sort().join(', ');
+        return lines('=== Core Technologies & Stack ===', '', list);
+      }
+      case 'experience.txt':
+      case 'experience': {
+        const output: string[] = ['=== Professional & Academic Experience ===', ''];
+        for (const exp of context.content.experiences) {
+          output.push(`* ${exp.title} | ${exp.organization} (${formatDateRange(exp.startDate, exp.endDate)})`);
+          if (exp.responsibilities && exp.responsibilities.length > 0) {
+            exp.responsibilities.forEach((r) => output.push(`  - ${r}`));
+          } else if (exp.description) {
+            output.push(`  - ${exp.description}`);
+          }
+          output.push('');
+        }
+        return lines(...output);
+      }
+      case 'certifications.txt':
+      case 'certifications': {
+        const output: string[] = ['=== Verified Certifications ===', ''];
+        for (const cert of context.content.certifications) {
+          output.push(`* ${cert.title} - ${cert.issuer} (Issued: ${cert.acquiredOn.iso})`);
+          if (cert.credentialId) output.push(`  ID: ${cert.credentialId}`);
+          if (cert.verificationUrl) output.push(`  Verify: ${cert.verificationUrl}`);
+        }
+        return lines(...output);
+      }
+      case 'projects.txt':
+      case 'projects': {
+        const output: string[] = ['=== Practical Projects ===', ''];
+        for (const proj of context.content.projects) {
+          output.push(`* ${proj.title} [${proj.category}]`);
+          output.push(`  ${proj.description}`);
+          output.push(`  Stack: ${proj.techStack.join(', ')}`);
+          if (proj.liveUrl) output.push(`  Live: ${proj.liveUrl}`);
+          if (proj.githubUrl) output.push(`  Source: ${proj.githubUrl}`);
+          output.push('');
+        }
+        return lines(...output);
+      }
+      case 'readme.md':
+      case 'readme':
+        return lines(
+          '# gladwin.dev - Engineering Portfolio Workstation',
+          '',
+          'Interactive developer workstation powered by Next.js, TypeScript, and Docker.',
+          '',
+          '## Navigation',
+          'Run `help` for complete command registry.',
+          'Run `ls` to inspect virtual filesystem.',
+          'Run `status` for verified metrics and derivation statistics.',
+        );
+      default:
+        return lines(
+          `cat: ${argv[0] ?? ''}: No such file or directory`,
+          '',
+          'Available files:',
+          '  about.txt           contact.json        skills.txt',
+          '  experience.txt      certifications.txt  projects.txt',
+          '  README.md',
+        );
+    }
+  },
+
+  grep: (argv, context) => {
+    const query = argv.join(' ').toLowerCase().trim();
+    if (query === '') {
+      return lines('grep: search pattern required. Usage: grep <term>');
+    }
+    const results: string[] = [];
+
+    for (const proj of context.content.projects) {
+      if (
+        proj.title.toLowerCase().includes(query) ||
+        proj.description.toLowerCase().includes(query) ||
+        proj.techStack.some((t) => t.toLowerCase().includes(query))
+      ) {
+        results.push(`[projects] ${proj.title}: ${proj.description.slice(0, 75)}...`);
+      }
+    }
+
+    for (const exp of context.content.experiences) {
+      if (
+        exp.title.toLowerCase().includes(query) ||
+        exp.organization.toLowerCase().includes(query) ||
+        exp.description.toLowerCase().includes(query) ||
+        (exp.responsibilities && exp.responsibilities.some((r) => r.toLowerCase().includes(query)))
+      ) {
+        results.push(`[experience] ${exp.title} (${exp.organization})`);
+      }
+    }
+
+    for (const cert of context.content.certifications) {
+      if (cert.title.toLowerCase().includes(query) || cert.issuer.toLowerCase().includes(query)) {
+        results.push(`[certifications] ${cert.title} - ${cert.issuer}`);
+      }
+    }
+
+    for (const tech of context.content.technologies) {
+      if (tech.name.toLowerCase().includes(query)) {
+        results.push(`[skills] ${tech.name} (${tech.category})`);
+      }
+    }
+
+    if (results.length === 0) {
+      return lines(`grep: no matches found for '${query}'`);
+    }
+
+    return lines(
+      `Matches for '${query}' (${results.length}):`,
+      '',
+      ...results.slice(0, 15),
+      ...(results.length > 15 ? [`... and ${results.length - 15} more matches.`] : []),
+    );
+  },
 
   projects: (_argv, context) => {
     const output: string[] = [];
-    for (const caseStudy of context.content.caseStudies) {
-      output.push(`${caseStudy.title} (${caseStudy.slug})`);
-      output.push(row('  status', caseStudy.status));
-      output.push(row('  category', caseStudy.category));
-      output.push(row('  stack', caseStudy.technologies.map((t) => t.name).join(', ')));
-      output.push(row('  live', caseStudy.liveUrl));
-      output.push(row('  source', caseStudy.githubUrl));
+    for (const project of context.content.projects) {
+      output.push(`[${project.category.toUpperCase()}] ${project.title}`);
+      if (project.techStack.length > 0) {
+        output.push(row('  stack:', project.techStack.join(' · '), 12));
+      }
+      if (project.githubUrl) {
+        output.push(row('  source:', project.githubUrl, 12));
+      }
+      if (project.liveUrl && project.liveUrl !== project.githubUrl) {
+        output.push(row('  live:', project.liveUrl, 12));
+      }
       output.push('');
     }
-    output.push(`${context.content.caseStudies.length} case studies recorded.`);
-    output.push(`${context.derived.statistics.caseStudyCount} published.`);
-    output.push('Run `open <slug>` for a published case study.');
+    output.push(`${context.content.projects.length} verified projects recorded in portfolio data.`);
+    if (context.content.caseStudies.length > 0) {
+      output.push(`${context.content.caseStudies.length} architectural case studies:`);
+      for (const cs of context.content.caseStudies) {
+        output.push(`  ${cs.slug}: ${cs.title} (${cs.status})`);
+      }
+    }
+    output.push('Run `open <slug>` for detailed project navigation.');
     return lines(...output);
   },
-
 
   gaps: (_argv, context) => {
     const output = [];
@@ -157,75 +323,97 @@ const RESOLVERS: Readonly<Record<string, Resolve>> = {
 
     return lines(...output);
   },
+
   open: (argv, context) => {
-    const slug = argv[0];
+    const slug = argv[0]?.toLowerCase();
     if (slug === undefined || slug === '') {
       return lines('open needs a project slug. Usage: open <project>');
     }
 
     const caseStudy = context.content.caseStudies.find((candidate) => candidate.slug === slug);
+    const project = context.content.projects.find((candidate) => candidate.slug === slug);
 
-    if (caseStudy === undefined) {
+    if (caseStudy === undefined && project === undefined) {
+      const availableSlugs = [
+        ...context.content.projects.map((p) => p.slug),
+        ...context.content.caseStudies.map((cs) => cs.slug),
+      ];
       return lines(
-        `No case study matches "${slug}".`,
+        `No project matches "${slug}".`,
         '',
-        'These slugs exist:',
-        ...context.content.caseStudies.map((candidate) => `  ${candidate.slug}`),
+        'Available slugs include:',
+        ...availableSlugs.slice(0, 8).map((candidate) => `  ${candidate}`),
+        ...(availableSlugs.length > 8 ? [`  ... (${availableSlugs.length - 8} more)`] : []),
       );
     }
 
-    // Publication is read from the content rather than held here, so this
-    // command cannot offer an address the route would refuse to render.
-    if (caseStudy.status !== 'published') {
-      return lines(
-        `No case study is published for "${slug}".`,
-        '',
-        `${caseStudy.title} is recorded in the content model as a draft, so its`,
-        'case-study page is not published and there is nowhere to navigate to.',
-      );
-    }
-
-    // A navigation intent, not a navigation. The result arrives in a fetch
-    // response; `redirect()` thrown here would produce a response the client
-    // would not follow as intended.
-    return { lines: [`Opening ${caseStudy.title}...`], navigateTo: `/projects/${slug}` };
+    const title = caseStudy?.title ?? project?.title ?? slug;
+    return { lines: [`Navigating to ${title}...`], navigateTo: `/#projects` };
   },
 
   skills: (_argv, context) => {
-    const technologies = technologiesInUse(context);
-    return lines(
-      ...technologies,
-      '',
-      `${context.derived.statistics.uniqueTechnologyCount} distinct technologies.`,
-    );
+    const output: string[] = [];
+    const grouped = new Map<string, string[]>();
+    for (const tech of context.content.technologies) {
+      const cat = tech.category;
+      const list = grouped.get(cat) ?? [];
+      list.push(tech.name);
+      grouped.set(cat, list);
+    }
+    const categoryLabels: Record<string, string> = {
+      platform: 'Platforms & Cloud',
+      language: 'Languages',
+      framework: 'Frameworks',
+      library: 'Libraries',
+      database: 'Databases',
+      model: 'AI & Models',
+      field: 'Domains & Systems',
+      practice: 'Practices & Tools',
+    };
+    for (const [cat, techs] of grouped.entries()) {
+      const label = categoryLabels[cat] ?? cat;
+      output.push(`${label}:`);
+      output.push(`  ${techs.join(' · ')}`);
+      output.push('');
+    }
+    output.push(`${context.content.technologies.length} verified technologies across portfolio systems.`);
+    return lines(...output);
   },
 
-  certifications: (_argv, context) =>
-    lines(
-      ...[...context.content.certifications]
-        .sort((a, b) => b.acquiredOn.year - a.acquiredOn.year)
-        .map((certification) =>
-          row(
-            certification.acquiredOn.iso,
-            `${certification.title} - ${certification.issuer}` +
-              (certification.expiration === null ? '' : ` (expires ${certification.expiration.iso})`),
-          ),
-        ),
-      '',
-      `${context.derived.statistics.certificationsEarned} certifications recorded.`,
-    ),
+  certifications: (_argv, context) => {
+    const output: string[] = [];
+    const sorted = [...context.content.certifications].sort(
+      (a, b) =>
+        b.acquiredOn.year * 12 +
+        (b.acquiredOn.month ?? 0) -
+        (a.acquiredOn.year * 12 + (a.acquiredOn.month ?? 0)),
+    );
+    for (const cert of sorted) {
+      output.push(`[${cert.acquiredOn.iso}] ${cert.title}`);
+      output.push(row('  issuer:', cert.issuer, 12));
+      if (cert.credentialId) {
+        output.push(row('  id:', cert.credentialId, 12));
+      }
+      if (cert.expiration) {
+        output.push(row('  expires:', cert.expiration.iso, 12));
+      }
+      output.push('');
+    }
+    output.push(`${context.content.certifications.length} verified credentials recorded.`);
+    return lines(...output);
+  },
 
   experience: (_argv, context) => {
     const output: string[] = [];
-    for (const experience of context.content.experiences) {
-      output.push(`${experience.title} - ${experience.organization}`);
-      output.push(row('  duration', formatDateRange(experience.startDate, experience.endDate)));
-      // An unclassified record says so rather than printing nothing, which would
-      // leave the row looking like a formatting slip rather than a stated absence.
-      output.push(row('  track', experience.track ?? 'unclassified'));
+    for (const exp of context.content.experiences) {
+      const dates = formatDateRange(exp.startDate, exp.endDate);
+      output.push(`${exp.title} · ${exp.organization}`);
+      output.push(row('  period:', dates, 12));
+      if (exp.location) output.push(row('  location:', exp.location, 12));
+      if (exp.track) output.push(row('  track:', exp.track, 12));
       output.push('');
     }
-    output.push(`${context.derived.statistics.rolesHeld} roles recorded.`);
+    output.push(`${context.content.experiences.length} positions and technical leads recorded.`);
     return lines(...output);
   },
 
@@ -233,59 +421,77 @@ const RESOLVERS: Readonly<Record<string, Resolve>> = {
     const output: string[] = [];
     for (const record of context.content.education) {
       output.push(record.title);
-      output.push(row('  institution', record.institution));
-      if (record.degree !== null) output.push(row('  degree', record.degree));
-      output.push(row('  period', formatDateRange(record.startDate, record.endDate)));
+      output.push(row('  school:', record.institution, 12));
+      if (record.degree !== null) output.push(row('  degree:', record.degree, 12));
+      output.push(row('  period:', formatDateRange(record.startDate, record.endDate), 12));
+      if (record.field.length > 0) output.push(row('  focus:', record.field.join(' · '), 12));
       output.push('');
     }
-    output.push(`${context.content.education.length} records of study.`);
+    output.push(`${context.content.education.length} academic qualification records.`);
     return lines(...output);
   },
 
-  contact: () => {
-    const email = SECONDARY_ACTIONS.find((action) => action.href.startsWith('mailto:'));
-    return lines(row('email', email === undefined ? 'not recorded' : email.href.replace('mailto:', '')));
+  contact: (_argv, context) => {
+    const email = context.content.socialLinks.find((l) => l.platform === 'email');
+    const linkedin = context.content.socialLinks.find((l) => l.platform === 'linkedin');
+    const github = context.content.socialLinks.find((l) => l.platform === 'github');
+    return lines(
+      row('email:', email ? email.href.replace('mailto:', '') : 'not recorded', 12),
+      row('linkedin:', linkedin ? linkedin.href : 'not recorded', 12),
+      row('github:', github ? github.href : 'not recorded', 12),
+      '',
+      'Run `socials` for all 11 communication endpoints.',
+    );
   },
 
-  socials: () => lines(...SOCIAL_LINKS.map((link) => row(link.label, link.href))),
+  socials: (_argv, context) => {
+    const output: string[] = [];
+    for (const link of context.content.socialLinks) {
+      output.push(row(`${link.label}:`, link.href, 16));
+    }
+    output.push('');
+    output.push(`${context.content.socialLinks.length} communication channels available.`);
+    return lines(...output);
+  },
 
   status: (_argv, context) => {
     const stats = context.derived.statistics;
     return lines(
-      row('case studies', String(stats.caseStudyCount)),
-      row('featured', String(stats.featuredCaseStudyCount)),
-      row('technologies', String(stats.uniqueTechnologyCount)),
-      row('cloud platforms', String(stats.distinctCloudPlatforms)),
-      row('roles held', String(stats.rolesHeld)),
-      row('leadership roles', String(stats.leadershipRoles)),
-      row('certifications', String(stats.certificationsEarned)),
-      row('years of practice', String(stats.yearsOfPractice)),
+      row('projects:', String(context.content.projects.length), 18),
+      row('case studies:', String(stats.caseStudyCount), 18),
+      row('certifications:', String(stats.certificationsEarned), 18),
+      row('technologies:', String(stats.uniqueTechnologyCount), 18),
+      row('cloud platforms:', String(stats.distinctCloudPlatforms), 18),
+      row('roles held:', String(stats.rolesHeld), 18),
+      row('leadership roles:', String(stats.leadershipRoles), 18),
+      row('years of practice:', String(stats.yearsOfPractice), 18),
       '',
-      'Every figure above is derived from the content model.',
+      'All metrics derived from verified portfolio records.',
     );
   },
 
   neofetch: (_argv, context) => {
     const stats = context.derived.statistics;
-    const rule = '-'.repeat(24);
+    const rule = '─'.repeat(48);
     return lines(
       rule,
-      row('owner', PROFILE.name),
-      row('role', PROFILE.role),
-      row('case studies', String(stats.caseStudyCount)),
-      row('technologies', String(stats.uniqueTechnologyCount)),
-      row('cloud platforms', String(stats.distinctCloudPlatforms)),
-      row('certifications', String(stats.certificationsEarned)),
-      row('years of practice', String(stats.yearsOfPractice)),
+      row('host:', 'gladwin.dev', 16),
+      row('owner:', PROFILE.name, 16),
+      row('role:', PROFILE.role, 16),
+      row('projects:', `${context.content.projects.length} verified (${stats.caseStudyCount} case studies)`, 16),
+      row('certifications:', `${stats.certificationsEarned} credentials`, 16),
+      row('cloud:', 'AWS · Azure · Google Cloud', 16),
+      row('technologies:', `${stats.uniqueTechnologyCount} distinct in stack`, 16),
+      row('roles:', `${stats.rolesHeld} recorded positions`, 16),
       rule,
-      'Figures derived from content; run `status` for the full set.',
+      'Run `status` for complete metrics, `help` for commands.',
     );
   },
 
   date: (_argv, context) =>
     lines(
-      `Server time: ${context.now.toISOString()}`,
-      `Local time: ${context.now.toString()}`,
+      row('server time:', context.now.toISOString(), 14),
+      row('local time:', context.now.toString(), 14),
     ),
 
   uptime: (_argv, context) => {
@@ -293,10 +499,135 @@ const RESOLVERS: Readonly<Record<string, Resolve>> = {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     return lines(
-      `Serving process age: ${hours}h ${minutes}m ${seconds % 60}s`,
+      row('process age:', `${hours}h ${minutes}m ${seconds % 60}s`, 14),
       '',
-      'This is the age of the process serving the request, not the availability',
-      'of the site. No uptime is recorded for the site itself.',
+      'Serving process age only. No uptime or availability metrics are fabricated for the site.',
+    );
+  },
+
+  tech: (argv, context) => RESOLVERS.skills(argv, context),
+
+  certs: (argv, context) => RESOLVERS.certifications(argv, context),
+
+  sudo: (argv) => {
+    const full = argv.join(' ').toLowerCase();
+    if (full.includes('hire') && full.includes('gladwin')) {
+      return lines(
+        '[sudo] password for visitor: **********',
+        'ACCESS GRANTED: Gladwin is ready to join your team!',
+        'Gladwin Ferdz Del Rosario specializes in scalable cloud systems & reliable infrastructure.',
+        'Reach out directly: gladwin.delrosario.organizations@gmail.com',
+      );
+    }
+    if (full === '') {
+      return lines('usage: sudo <command>');
+    }
+    return lines(
+      '[sudo] password for visitor: **********',
+      'visitor is not in the sudoers file. This incident will be reported.',
+    );
+  },
+
+  apt: (argv) => {
+    const sub = argv[0]?.toLowerCase() ?? '';
+    if (sub === 'update' || sub === 'upgrade') {
+      return lines(
+        'Hit:1 https://gladwin.dev/packages noble InRelease',
+        'Reading package lists... Done',
+        'Building dependency tree... Done',
+        'All packages up to date. Next.js, Spring Boot, React, Docker, Linux, and Cloud.',
+      );
+    }
+    if (sub === 'install') {
+      const pkg = argv.slice(1).join(' ') || 'coffee';
+      return lines(
+        'Reading package lists... Done',
+        `Setting up ${pkg} (latest)... Done`,
+        `Successfully installed ${pkg}.`,
+      );
+    }
+    return lines(
+      'apt 2.8.3 (x86_64)',
+      'Usage: apt [update | upgrade | install <pkg>]',
+      'Try: `apt update` or `apt install coffee`',
+    );
+  },
+
+  sl: () =>
+    lines(
+      '      ====        ________                ___________ ',
+      '  _D _|  |_______/        \\__I_I_____===__|_________| ',
+      '   |(_)---  |   |====    |   |--|      |________________| ',
+      '   /     |================ ||  |      |      |   |    | ',
+      '  |      |________________||  |______|______|___|____| ',
+      '  |________|  (_) (_)  (_)      (_) (_)  (_)     (_)   ',
+      '',
+      '🚂 Choo choo! You ran `sl` instead of `ls`.',
+    ),
+
+  cowsay: (argv) => {
+    const text = argv.length > 0 ? argv.join(' ') : 'Gladwin writes scalable cloud architectures!';
+    const len = Math.min(text.length, 50);
+    const border = '-'.repeat(len + 2);
+    return lines(
+      ` ${border} `,
+      `< ${text} >`,
+      ` ${border} `,
+      '        \\   ^__^',
+      '         \\  (oo)\\_______',
+      '            (__)\\       )\\/\\',
+      '                ||----w |',
+      '                ||     ||',
+    );
+  },
+
+  fortune: () => {
+    const quotes = [
+      '"Simplicity is prerequisite for reliability." — Edsger W. Dijkstra',
+      '"Premature optimization is the root of all evil." — Donald Knuth',
+      '"There are only two hard things in Computer Science: cache invalidation and naming things." — Phil Karlton',
+      '"Any fool can write code that a computer can understand. Good programmers write code that humans can understand." — Martin Fowler',
+      '"First, solve the problem. Then, write the code." — John Johnson',
+      '"Make it work, make it right, make it fast." — Kent Beck',
+    ];
+    return lines(quotes[Math.floor(Date.now() / 1000) % quotes.length]);
+  },
+
+  matrix: () =>
+    lines(
+      'Wake up, Neo...',
+      'The Matrix has you.',
+      'Follow the white rabbit.',
+      'Knock, knock, Neo.',
+      '',
+      '01000111 01101100 01100001 01100100 01110111 01101001 01101110',
+      'System operational: All matrix nodes routed through Next.js and Docker.',
+    ),
+
+  vim: () =>
+    lines(
+      'VIM - Vi IMproved 9.1',
+      '',
+      'How to exit Vim:',
+      '  Type  :q!  and press <Enter> to abandon all changes.',
+      '',
+      '(No terminal buffers were harmed. You remain safely in the web workstation.)',
+    ),
+
+  vi: (argv, context) => RESOLVERS.vim(argv, context),
+
+  nano: () =>
+    lines(
+      'GNU nano 7.2',
+      'File edit simulation: All files in repository are read-only.',
+      'Use ^X (or type other terminal commands) to continue.',
+    ),
+
+  rm: (argv) => {
+    const target = argv.join(' ') || '/';
+    return lines(
+      `rm: cannot remove '${target}': Permission denied.`,
+      'Portfolio integrity preserved. Nice try!',
     );
   },
 
@@ -311,19 +642,72 @@ const RESOLVERS: Readonly<Record<string, Resolve>> = {
 function helpLines(): readonly string[] {
   const width =
     DECLARED_COMMANDS.reduce((widest, command) => Math.max(widest, command.usage.length), 0) + 2;
-  const render = (declarations: readonly { usage: string; summary: string }[]): readonly string[] =>
-    declarations.map((command) => `  ${command.usage.padEnd(width)}${command.summary}`);
+
+  const render = (names: readonly string[]): readonly string[] =>
+    names
+      .map((name) => findDeclaration(name))
+      .filter((decl): decl is NonNullable<typeof decl> => decl !== undefined)
+      .map((cmd) => `  ${cmd.usage.padEnd(width)}${cmd.summary}`);
+
+  const coreCommands = [
+    'whoami',
+    'about',
+    'projects',
+    'open',
+    'skills',
+    'tech',
+    'certifications',
+    'certs',
+    'experience',
+    'education',
+    'contact',
+    'socials',
+    'status',
+    'neofetch',
+  ];
+
+  const linuxCommands = [
+    'ls',
+    'pwd',
+    'cat',
+    'grep',
+    'echo',
+    'uname',
+    'hostname',
+    'date',
+    'uptime',
+  ];
+
+  const sessionCommands = ['history', 'clear', 'exit'];
+
+  const extraCommands = [
+    'sudo',
+    'apt',
+    'sl',
+    'cowsay',
+    'fortune',
+    'matrix',
+    'vim',
+    'nano',
+    'rm',
+  ];
 
   return [
-    'Available commands:',
+    'gladwin.dev terminal [v2.0] — command reference',
     '',
-    ...render(serverDeclarations()),
+    'Core Portfolio Commands:',
+    ...render(coreCommands),
     '',
-    'Session commands, resolved without a request:',
+    'Linux Workstation Utilities:',
+    ...render(linuxCommands),
     '',
-    ...render(sessionDeclarations()),
+    'Session Controls:',
+    ...render(sessionCommands),
     '',
-    'Tab completes command names. Escape closes the terminal.',
+    'Developer Easter Eggs:',
+    ...render(extraCommands),
+    '',
+    'Tab completes command names. Up/Down navigates history. Escape closes.',
   ];
 }
 
@@ -368,18 +752,37 @@ export function arityOf(command: Command): number {
  * different command.
  */
 export function arityMismatch(command: Command, argument: string): boolean {
-  return arityOf(command) === 0 ? argument !== '' : argument === '';
+  switch (command.arity) {
+    case 'none':
+      return argument !== '';
+    case 'one': {
+      if (argument === '') return true;
+      const words = argument.trim().split(/\s+/);
+      return words.length !== 1;
+    }
+    case 'optional': {
+      if (argument === '') return false;
+      const words = argument.trim().split(/\s+/);
+      return words.length > 1;
+    }
+    case 'any':
+      return false;
+  }
 }
 
 /** A readable arity error for a command given the wrong number of arguments. */
 export function arityError(command: Command, given: number): CommandResult {
-  const expected = arityOf(command);
-  const noun = expected === 1 ? 'argument' : 'arguments';
-  return lines(
-    given === 0
-      ? `${command.name} needs ${expected} ${noun}. Usage: ${command.usage}`
-      : `${command.name} takes ${expected} ${noun}. Usage: ${command.usage}`,
-  );
+  if (command.arity === 'one') {
+    return lines(
+      given === 0
+        ? `${command.name} needs 1 argument. Usage: ${command.usage}`
+        : `${command.name} takes 1 argument. Usage: ${command.usage}`,
+    );
+  }
+  if (command.arity === 'none') {
+    return lines(`${command.name} takes no arguments. Usage: ${command.usage}`);
+  }
+  return lines(`Usage: ${command.usage}`);
 }
 
 /** A readable refusal for a name that is not a declared command. */

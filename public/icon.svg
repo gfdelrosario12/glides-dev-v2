@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <style>
+      .bg { fill: #0b0c0e; }
+      .border { stroke: #262a31; }
+      .glyph { fill: #e8eaed; }
+      .dot { fill: #ffb020; }
+      @media (prefers-color-scheme: light) {
+        .bg { fill: #ffffff; }
+        .border { stroke: #cbd5e1; }
+        .glyph { fill: #0f172a; }
+        .dot { fill: #b45309; }
+      }
+    </style>
+  </defs>
+  <rect class="bg" width="64" height="64" rx="14"/>
+  <rect class="border" x="1.5" y="1.5" width="61" height="61" rx="12.5" fill="none" stroke-width="2.5"/>
+  <path class="glyph" d="M 40.5 22 C 38.2 18.5 34 16 28.5 16 C 19.4 16 13 22.8 13 32 C 13 41.2 19.4 48 28.5 48 C 35.5 48 40.5 44 42.2 37.5 H 28.5 V 31.5 H 48 V 33.5 C 47.2 43.8 39.5 53.5 28.5 53.5 C 16 53.5 7 43.8 7 32 C 7 20.2 16 10.5 28.5 10.5 C 36.8 10.5 43.2 14.2 46.8 20 Z"/>
+  <rect class="dot" x="43" y="41" width="9" height="9" rx="2.5"/>
+</svg>

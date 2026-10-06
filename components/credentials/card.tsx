@@ -2,7 +2,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { TokenChipList } from '@/components/sections/chip';
 
 import { CredentialVerification, type CredentialVerificationState } from './verification';
-import Link from 'next/link';
 
 /**
  * One credential, as a card on the listing.
@@ -28,6 +27,7 @@ export interface CredentialCardProps {
   readonly destination: string;
   readonly destinationLabel: string;
   readonly skills: readonly string[];
+  readonly credentialId?: string | null;
 }
 
 export function CredentialCard({
@@ -40,6 +40,7 @@ export function CredentialCard({
   destination,
   destinationLabel,
   skills,
+  credentialId,
 }: CredentialCardProps) {
   const titleId = `credential-${slug}`;
 
@@ -49,10 +50,17 @@ export function CredentialCard({
         {/* `level={3}` because the listing's own heading is the level 2 and the card
             titles sit inside it; a card title at level 2 would compete with it. */}
         <CardTitle id={titleId} level={3} className="group-hover:text-accent transition-colors">
-          <Link href={`/credentials/${slug}`} className="before:absolute before:inset-0">{title}</Link>
+          {title}
         </CardTitle>
-        <CardDescription>
-          {issuer} &middot; acquired {acquiredOn}
+        <CardDescription as="div">
+          <div>
+            {issuer} &middot; acquired {acquiredOn}
+          </div>
+          {credentialId ? (
+            <div className="mt-1 font-mono text-[11px] text-text-muted">
+              Credential ID: <span className="font-mono text-text-secondary select-all">{credentialId}</span>
+            </div>
+          ) : null}
         </CardDescription>
       </CardHeader>
 

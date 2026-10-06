@@ -2,7 +2,7 @@ import { PROFILE } from '@/content/site';
 
 export function TerminalContact() {
   return (
-    <div className="w-full max-w-2xl overflow-hidden rounded-md border border-border bg-surface-inset font-mono text-sm leading-relaxed text-text shadow-sm">
+    <div className="w-full max-w-2xl mx-auto overflow-hidden rounded-md border border-border bg-surface-inset font-mono text-sm leading-relaxed text-text shadow-sm">
       {/* Terminal Header */}
       <div className="flex items-center gap-2 border-b border-border bg-surface px-4 py-2">
         <div className="flex gap-1.5">
@@ -24,9 +24,8 @@ export function TerminalContact() {
 {`{
   "name": "${PROFILE.name}",
   "role": "${PROFILE.role}",
-  "availability": "Open to collaboration and new opportunities",
-  "location": "Philippines",
-  "status": "Online"
+  "email": "gladwin.delrosario.organizations@gmail.com",
+  "location": "Philippines"
 }`}
         </pre>
         <div className="mt-4 flex items-start gap-2">

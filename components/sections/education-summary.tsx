@@ -1,5 +1,4 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Metadata, MetadataList } from '@/components/ui/metadata';
 import { TokenChipList } from './chip';
 import { CONTENT } from '@/lib/content/model';
@@ -46,7 +45,7 @@ export function EducationSummary() {
           const titleId = `education-title-${record.slug}`;
 
           return (
-            <li key={record.source.file + record.source.line} className="min-w-0">
+            <li key={record.source.file + record.source.line} className="min-w-0 w-full max-w-xl mx-auto lg:max-w-none">
               <Card labelledBy={titleId}>
                 <CardHeader>
                   <CardTitle id={titleId} level={3}>
@@ -85,19 +84,10 @@ export function EducationSummary() {
         })}
       </ul>
 
-      {/* The full history is one click away, and this section lists no experience
-          entry: adding a role must not change the landing page. */}
       <div className="flex flex-col gap-2">
-        <p className="text-small text-text-secondary">
-          {count === 1
-            ? 'One record of study. The timeline carries what was done in each.'
-            : `${count} records of study. The timeline carries what was done in each, and every recorded role.`}
+        <p className="font-mono text-label text-text-muted">
+          {count} {count === 1 ? 'academic record' : 'academic records'} documented.
         </p>
-        <div>
-          <Button href="/background" variant="secondary" size="sm">
-            Full background
-          </Button>
-        </div>
       </div>
     </section>
   );

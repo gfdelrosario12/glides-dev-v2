@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import { PRIMARY_NAV, type NavItem } from '@/lib/navigation';
 import { CONTENT_GUTTER } from '@/lib/layout';
-import { buttonClasses } from '@/components/ui/button';
 import { NavLink } from './nav-link';
 import { SystemStatusServer } from './system-status-server';
 import { ThemeToggle } from './theme-toggle';
+import { MobileNavDrawer } from './mobile-nav-drawer';
 
 
 /**
@@ -25,14 +25,14 @@ import { ThemeToggle } from './theme-toggle';
  */
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-surface/90 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-border bg-surface/90 pt-[env(safe-area-inset-top)] backdrop-blur-md">
       <div
-        className={`mx-auto flex h-14 max-w-wide items-center justify-between gap-4 ${CONTENT_GUTTER}`}
+        className={`mx-auto flex min-h-14 max-w-wide items-center justify-between gap-2 py-2 ${CONTENT_GUTTER}`}
       >
-        <div className="flex items-center gap-4">
+        <div className="flex min-w-0 items-center gap-2 sm:gap-4">
         <Link
           href="/"
-          className="rounded-sm px-2 py-1 font-mono text-small font-medium uppercase tracking-[0.06em] text-text transition-colors duration-200 hover:bg-surface-raised hover:text-accent"
+          className="shrink-0 rounded-sm px-2 py-2 font-mono text-small font-medium uppercase tracking-[0.06em] text-text transition-colors duration-200 hover:bg-surface-raised hover:text-accent"
         >
           Gladwin<span className="text-accent">.dev</span>
         </Link>
@@ -40,7 +40,7 @@ export function SiteHeader() {
         <SystemStatusServer />
       </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <nav aria-label="Primary" className="hidden items-center gap-6 sm:flex">
             {PRIMARY_NAV.map((item) => (
               <NavEntry key={entryKey(item)} item={item} />
@@ -48,28 +48,11 @@ export function SiteHeader() {
           </nav>
           <ThemeToggle />
 
-          <details className="group relative sm:hidden">
-          <summary
-            className={`${buttonClasses('secondary', 'sm')} cursor-pointer list-none [&::-webkit-details-marker]:hidden`}
-          >
-            Menu
-            <span
-              aria-hidden="true"
-              className="text-accent transition-transform group-open:rotate-90"
-            >
-              &rsaquo;
-            </span>
-          </summary>
-
-          <nav
-            aria-label="Primary"
-            className="absolute right-0 top-full z-50 mt-2 flex min-w-48 flex-col gap-3 rounded-md border border-border bg-surface-overlay p-4"
-          >
-            {PRIMARY_NAV.map((item) => (
-              <NavEntry key={entryKey(item)} item={item} />
-            ))}
-          </nav>
-          </details>
+          <MobileNavDrawer
+            items={PRIMARY_NAV.filter(
+              (item): item is Extract<NavItem, { kind: 'link' }> => item.kind === 'link',
+            )}
+          />
         </div>
       </div>
     </header>

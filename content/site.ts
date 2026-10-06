@@ -72,7 +72,7 @@ export const PROFILE: Profile = Object.freeze({
     'Working across infrastructure, cloud, cybersecurity, networking, and IT operations.',
 
   summary:
-    'I build and run the layers systems depend on — cloud platforms, networks, and the operational practice around them — with hands-on experience in IT service management and security awareness work across student and community organisations.',
+    'Technology professional focused on building scalable, reliable systems across full-stack development and cloud infrastructure. Experienced in developing modern web applications using React and Spring Boot, with hands-on exposure to AWS, Azure, and Google Cloud. Strong foundation in backend engineering, distributed systems, and cloud-native architecture, with practical experience in deploying applications, managing infrastructure, and designing end-to-end solutions. Driven by curiosity and impact to contribute to teams that value scalability, performance, and continuous improvement.',
 
   /**
    * Written to the recorded content and no further. Every specific claim here is
@@ -81,9 +81,9 @@ export const PROFILE: Profile = Object.freeze({
    * progress.
    */
   biography: Object.freeze([
-    'My technical direction is infrastructure, cloud, cybersecurity, and networking — the layers a system runs on rather than the interface in front of it. I work across AWS, Microsoft Azure, and Google Cloud, and I spend most of my time on the operational side of that: service management, incident escalation, and the governance around systems that other people depend on.',
-    'That direction came out of two semesters as an IT Service Management Intern at Sun Life Global Solutions, where I cross-checked IP addresses and system data against manual records, tracked and escalated infrastructure issues through to resolution, and improved the issue-tracking dashboard the team used to present them. Around it sits sustained student and community leadership: Vice President for Operations at CyberPH, Executive Vice President at ICPEP, Chief Technology Officer and Chief Community Development Officer with the Google developer groups on campus, and a technical lead role in competitive hackathons.',
-    'Certifications across AWS, Google Cloud, Oracle Cloud, and TESDA sit alongside a Bachelor of Science in Computer Engineering in progress at the Polytechnic University of the Philippines, where my thesis is on distributed IoT monitoring for healthcare networks. My earlier work was in application development, and I keep building there — knowing what runs on top of the infrastructure makes the infrastructure easier to reason about.',
+    'His technical direction focuses on infrastructure, cloud, cybersecurity, and networking — the layers a system runs on rather than the interface in front of it. He works across AWS, Microsoft Azure, and Google Cloud, spending most of his time on the operational side: service management, incident escalation, and governance around dependable systems.',
+    'That direction emerged from two semesters as an IT Service Management Intern at Sun Life Global Solutions, where he cross-checked IP addresses and system data against manual records, tracked and escalated infrastructure issues through to resolution, and improved operational issue-tracking dashboards. Around it sits sustained student and community leadership: Vice President for Operations at CyberPH, Executive Vice President at ICPEP, Chief Technology Officer and Chief Community Development Officer with Google developer groups on campus, and technical lead roles in competitive hackathons.',
+    'Certifications across AWS, Google Cloud, Microsoft, Oracle Cloud, and TESDA accompany a Bachelor of Science in Computer Engineering in progress at the Polytechnic University of the Philippines, where his thesis investigates distributed IoT monitoring for healthcare networks. His earlier work centered on application development, which he continues to build on — understanding what runs on top of the infrastructure makes systems easier to reason about.',
   ]),
 
   /** The profile photograph. Produced from the original by this change's build. */
@@ -169,8 +169,8 @@ export const FOCUS_AREAS: readonly FocusArea[] = [
     summary:
       'Computer networks as an academic specialisation and as a qualification in systems servicing and troubleshooting.',
     signals: [
-      { kind: 'qualificationFocus', token: 'Computer Networks' },
-      { kind: 'certificationTitle', token: 'Computer Systems Servicing NC2' },
+      { kind: 'qualificationFocus', token: 'Computer Networks Engineering' },
+      { kind: 'certificationTitle', token: 'Technical Support Fundamentals' },
     ],
   },
   {

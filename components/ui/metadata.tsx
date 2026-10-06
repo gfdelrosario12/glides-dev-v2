@@ -22,7 +22,7 @@ export function Metadata({ label, value, emptyLabel = 'Not recorded' }: Metadata
   const isEmpty = value === null || value === undefined || value === '';
 
   return (
-    <div className="grid grid-cols-[minmax(0,10rem)_minmax(0,1fr)] gap-3 py-2">
+    <div className="grid gap-1 py-2 sm:grid-cols-[minmax(0,10rem)_minmax(0,1fr)] sm:gap-3">
       <dt className="text-label font-mono uppercase tracking-[0.06em] text-text-muted">
         {label}
       </dt>

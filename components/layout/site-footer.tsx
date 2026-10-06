@@ -17,18 +17,18 @@ import { CONTENT_GUTTER } from '@/lib/layout';
  */
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border">
+    <footer className="border-t border-border pb-[env(safe-area-inset-bottom)]">
       <div
         className={`mx-auto flex max-w-wide flex-col gap-4 py-8 sm:flex-row sm:items-center sm:justify-between ${CONTENT_GUTTER}`}
       >
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 items-center text-center sm:items-start sm:text-left">
           <p className="font-mono text-small text-text">{PROFILE.name}</p>
           <p className="font-mono text-label text-text-muted">
             Next.js 16 &middot; Tailwind CSS v4 &middot; TypeScript
           </p>
         </div>
 
-        <nav aria-label="Elsewhere" className="flex flex-wrap items-center gap-4">
+        <nav aria-label="Elsewhere" className="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-4">
           {SOCIAL_LINKS.map((link) =>
             link.external ? (
               <a
@@ -36,7 +36,7 @@ export function SiteFooter() {
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-sm px-2 py-1 font-mono text-label uppercase tracking-[0.06em] text-text-secondary transition-colors duration-200 hover:bg-surface-raised hover:text-accent"
+                className="inline-flex min-h-11 items-center rounded-sm px-3 py-2 font-mono text-label uppercase tracking-[0.06em] text-text-secondary transition-colors duration-200 hover:bg-surface-raised hover:text-accent"
               >
                 {link.label}
                 <span className="sr-only"> (opens in a new tab)</span>
@@ -45,7 +45,7 @@ export function SiteFooter() {
               <a
                 key={link.href}
                 href={link.href}
-                className="rounded-sm px-2 py-1 font-mono text-label uppercase tracking-[0.06em] text-text-secondary transition-colors duration-200 hover:bg-surface-raised hover:text-accent"
+                className="inline-flex min-h-11 items-center rounded-sm px-3 py-2 font-mono text-label uppercase tracking-[0.06em] text-text-secondary transition-colors duration-200 hover:bg-surface-raised hover:text-accent"
               >
                 {link.label}
               </a>

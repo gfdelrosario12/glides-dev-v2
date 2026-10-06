@@ -1,9 +1,7 @@
 ## Purpose
 
 Defines the reusable presentational component contracts for Gladwin.dev: buttons, the card family, metadata label–value rows, and status indicators. These primitives are the only sanctioned way for the later case-study, credential, and terminal features to render chrome, so they carry the accessibility guarantees and the token discipline of the design system.
-
 ## Requirements
-
 ### Requirement: Primitives are presentational and domain-agnostic
 
 Every primitive SHALL accept only already-resolved display data as props. Primitives SHALL NOT import, parse, or fetch any content source; SHALL NOT contain domain vocabulary such as "project", "certification", "experience", or "credential"; and SHALL NOT branch on domain types. A primitive's behavior SHALL be fully determined by its variant, size, and tone props plus its children.
@@ -79,7 +77,7 @@ Every interactive primitive SHALL show a visible focus indicator when keyboard-f
 
 ### Requirement: The card family has a fixed composition contract
 
-The card family SHALL consist of `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, and `CardFooter`. `Card` SHALL render on `surface-raised` with a 1px `border` and a radius of at most 6px. `CardTitle` SHALL render in the `title` type step and SHALL be the card's accessible name when the card is a link or a labelled region.
+The card family SHALL consist of `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, and `CardFooter`. `Card` SHALL render on `surface-raised` with a 1px `border` and a radius of at most 6px. `CardTitle` SHALL render in the `title` type step and SHALL be the card's accessible name when the card is a link or a labelled region. `CardDescription` SHALL support rendering as either a paragraph element (`<p>`) or a division element (`<div>`) via an `as` prop to ensure valid HTML semantics when wrapping block-level children.
 
 #### Scenario: Card surface is the raised role
 
@@ -100,6 +98,11 @@ The card family SHALL consist of `Card`, `CardHeader`, `CardTitle`, `CardDescrip
 
 - **WHEN** a card omits one or more composition parts
 - **THEN** the remaining parts keep their order, and no part is rendered out of sequence
+
+#### Scenario: CardDescription renders as div when wrapping block content
+
+- **WHEN** `CardDescription` is invoked with `as="div"`
+- **THEN** it renders a `<div>` element with identical typographical classes (`wrap-anywhere text-small text-text-secondary`) and avoids nesting `<div>` descendants inside a `<p>` tag
 
 ### Requirement: Metadata renders label–value pairs in the data face
 
@@ -180,3 +183,4 @@ A newly added primitive SHALL meet every requirement in this capability — pres
 
 - **WHEN** the primitive set is complete
 - **THEN** the application's runtime dependency list is unchanged from the project scaffold
+

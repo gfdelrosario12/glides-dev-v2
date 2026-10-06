@@ -98,7 +98,8 @@ function isApplePlatform(): boolean {
  * real text in the server response rather than an empty frame.
  */
 const OPENING_LINES: readonly OutputLine[] = [
-  { text: 'Gladwin.dev terminal. Type `help` for commands, Escape to close.', kind: 'output' },
+  { text: 'gladwin.dev terminal [v2.0]', kind: 'output' },
+  { text: 'Type `help` for commands, `whoami` for profile overview.', kind: 'output' },
 ];
 
 export function TerminalProvider({ children }: { children: ReactNode }) {
@@ -234,6 +235,17 @@ export function TerminalProvider({ children }: { children: ReactNode }) {
             ...output.map((text) => ({ text, kind: 'output' as const })),
           ]);
           setAnnouncement(output.join('. '));
+          return;
+        }
+
+        if (declaration.name === 'exit') {
+          setLines((previous) => [
+            ...previous,
+            { text: line, kind: 'command' },
+            { text: 'Session closed. Type `help` or any command to restart.', kind: 'output' },
+          ]);
+          setAnnouncement('Terminal session closed.');
+          closeTerminal();
           return;
         }
 

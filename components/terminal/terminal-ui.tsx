@@ -9,13 +9,14 @@ function Line({ line }: { line: OutputLine }) {
     <div
       className={
         line.kind === 'command'
-          ? 'whitespace-pre-wrap break-words text-text'
-          : 'whitespace-pre-wrap break-words text-text-secondary'
+          ? 'whitespace-pre-wrap [overflow-wrap:anywhere] break-words text-text font-mono text-code sm:text-small'
+          : 'whitespace-pre-wrap [overflow-wrap:anywhere] break-words text-text-secondary font-mono text-code sm:text-small'
       }
     >
       {line.kind === 'command' ? (
-        <span aria-hidden="true" className="text-accent">
-          ${' '}
+        <span aria-hidden="true" className="text-accent select-none font-medium">
+          <span className="hidden sm:inline text-text-muted">gladwin@workstation:~$ </span>
+          <span className="inline sm:hidden">$ </span>
         </span>
       ) : null}
       {line.kind === 'command' ? <span className="sr-only">Command: </span> : null}
@@ -118,18 +119,37 @@ export const TerminalUI = forwardRef<HTMLInputElement, { onClose?: () => void; i
           </div>
         )}
 
-        <div ref={scrollbackRef} className="flex-1 overflow-y-auto px-4 py-3 [scrollbar-width:thin]">
+        {/* Always-visible system identity and environment strip */}
+        <div className="flex min-w-0 items-center justify-between border-b border-border bg-surface-raised/40 px-3 py-1.5 font-mono text-xs text-text-muted sm:px-4">
+          <div className="flex min-w-0 items-center gap-2 truncate">
+            <span className="text-accent select-none font-bold">#</span>
+            <span className="font-medium text-text truncate">gladwin.dev</span>
+            <span className="text-border">·</span>
+            <span className="truncate">Infrastructure, Cloud &amp; Cybersecurity</span>
+          </div>
+          <span className="hidden sm:inline-block shrink-0 text-text-muted">
+            session: active
+          </span>
+        </div>
+
+        <div ref={scrollbackRef} className="min-h-0 flex-1 overflow-y-auto px-3 py-3 [scrollbar-width:thin] sm:px-4">
           <div className="flex flex-col gap-1">
             {lines.map((line, index) => (
               <Line key={`${index}-${line.text}`} line={line} />
             ))}
-            {busy ? <div className="text-text-muted">...</div> : null}
+            {busy ? (
+              <div className="flex items-center gap-2 font-mono text-code text-text-muted">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
+                <span>running command...</span>
+              </div>
+            ) : null}
           </div>
         </div>
 
-        <div className="flex items-center gap-2 border-t border-border px-4 py-3">
-          <span aria-hidden="true" className="text-accent">
-            $
+        <div className="flex min-h-11 items-center gap-2 border-t border-border px-3 py-2.5 sm:px-4">
+          <span aria-hidden="true" className="text-accent font-medium select-none shrink-0">
+            <span className="hidden sm:inline text-text-muted">gladwin@workstation:~$</span>
+            <span className="inline sm:hidden">$</span>
           </span>
           <label htmlFor={inputId} className="sr-only">
             Terminal command input
@@ -143,8 +163,8 @@ export const TerminalUI = forwardRef<HTMLInputElement, { onClose?: () => void; i
             autoCorrect="off"
             spellCheck={false}
             onKeyDown={onKeyDown}
-            placeholder="help"
-            className="min-w-0 flex-1 bg-transparent text-small text-text placeholder:text-text-muted focus:outline-none"
+            placeholder="type 'help' or 'ls'..."
+            className="min-w-0 flex-1 bg-transparent text-base sm:text-small text-text placeholder:text-text-muted focus:outline-none"
           />
         </div>
 

@@ -65,7 +65,7 @@ export function SectionBlock({ section, idPrefix }: SectionBlockProps) {
       )}
 
       {section.prose === null ? null : (
-        <p className="max-w-prose text-body text-text-secondary">{section.prose}</p>
+        <p className="max-w-prose wrap-anywhere text-body text-text-secondary">{section.prose}</p>
       )}
 
       {photos.length === 0 ? null : (

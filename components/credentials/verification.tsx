@@ -36,6 +36,8 @@ const TONE_FOR_STATE: Record<CredentialVerificationState, StatusTone> = {
   'needs-attention': 'warning',
 };
 
+const LINKEDIN_CERTIFICATIONS_URL = 'https://www.linkedin.com/in/gladwindr/details/certifications/';
+
 export interface CredentialVerificationProps {
   readonly state: CredentialVerificationState;
   /**
@@ -56,6 +58,7 @@ export interface CredentialVerificationProps {
    * next to the record that supports it.
    */
   readonly destinationLabel: string;
+  readonly linkedinUrl?: string;
 }
 
 export function CredentialVerification({
@@ -63,15 +66,22 @@ export function CredentialVerification({
   stateLabel,
   destination,
   destinationLabel,
+  linkedinUrl = LINKEDIN_CERTIFICATIONS_URL,
 }: CredentialVerificationProps) {
+  void destinationLabel;
   return (
     <div className="flex flex-col gap-3">
       <StatusIndicator tone={TONE_FOR_STATE[state]} label={stateLabel} />
 
       <div className="flex flex-col gap-2">
-        <Button variant="secondary" size="sm" href={destination} external>
-          {destinationLabel}
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button variant="secondary" size="sm" href={linkedinUrl} external>
+            LinkedIn
+          </Button>
+          <Button variant="secondary" size="sm" href={destination} external>
+            Check Verification
+          </Button>
+        </div>
 
         {/*
           The address in text as well as in the button's target.

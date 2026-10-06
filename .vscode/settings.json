@@ -51,6 +51,38 @@
         "/^openspec instructions tasks --change \"implementation-reconciliation\" --json$/": {
             "approve": true,
             "matchCommandLine": true
+        },
+        "/^openspec status --change \"implementation-reconciliation\" --json && openspec instructions apply --change \"implementation-reconciliation\" --json$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^openspec instructions archive --change \"implementation-reconciliation\" --json$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^openspec status --change \"visual-cleanup\" --json && openspec instructions archive --change \"visual-cleanup\" --json$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^openspec new change \"experience-readability\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^openspec instructions specs --change \"experience-readability\" --json$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^openspec status --change \"experience-readability\" --json$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^openspec new change \"case-study-gateways\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^openspec new change \"mobile-responsive-system\"$/": {
+            "approve": true,
+            "matchCommandLine": true
         }
     }
 }

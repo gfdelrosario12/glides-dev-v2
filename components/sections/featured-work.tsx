@@ -56,11 +56,11 @@ export function FeaturedWork({ caseStudies, totalAvailable }: FeaturedWorkProps)
             Without it an unfeatured case study would be counted in the sentence
             above and reachable from nowhere else on the page. */}
         {omitted > 0 ? (
-          <p className="flex">
+          <div className="flex">
             <Button variant="secondary" size="sm" href="/projects">
               Browse archive
             </Button>
-          </p>
+          </div>
         ) : null}
       </div>
 

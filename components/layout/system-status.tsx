@@ -48,7 +48,7 @@ export function SystemStatus({ metrics }: SystemStatusProps) {
       {isOpen && (
         <div
           id="system-status-panel"
-          className="absolute left-0 sm:left-auto sm:right-0 top-full mt-2 w-64 origin-top-left sm:origin-top-right rounded-md border border-border bg-surface-overlay p-4 shadow-lg text-sm z-50 animate-in fade-in zoom-in-95 duration-200"
+          className="absolute left-0 sm:left-auto sm:right-0 top-full mt-2 w-[calc(100vw-2rem)] max-w-64 origin-top-left sm:origin-top-right rounded-md border border-border bg-surface-overlay p-4 shadow-lg text-sm z-50 animate-in fade-in zoom-in-95 duration-200"
         >
             <h3 className="mb-3 font-mono text-xs font-semibold uppercase tracking-wider text-text-secondary">
             Active / system metrics
