@@ -2,9 +2,9 @@ import Link from 'next/link';
 import { PRIMARY_NAV, type NavItem } from '@/lib/navigation';
 import { CONTENT_GUTTER } from '@/lib/layout';
 import { buttonClasses } from '@/components/ui/button';
-import { TerminalTrigger } from '@/components/terminal/terminal-trigger';
 import { NavLink } from './nav-link';
 import { SystemStatusServer } from './system-status-server';
+import { ThemeToggle } from './theme-toggle';
 
 
 /**
@@ -18,24 +18,21 @@ import { SystemStatusServer } from './system-status-server';
  * assistive technology with no client JavaScript. See design decision D6.
  *
  * Both the desktop navigation and the disclosure render from `PRIMARY_NAV`, so
- * their link sets and order are identical by construction. `PRIMARY_NAV` holds
- * two kinds of entry: a link, rendered through `NavLink`, and an action, rendered
- * through `TerminalTrigger` as a control. Both navigations handle both kinds, so
- * the action appears once in each without any extra wiring.
+ * their link sets and order are identical by construction.
  *
  * This file stays a Server Component. `TerminalTrigger` is a thin client child;
  * the header structure around it is still rendered on the server.
  */
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-surface">
+    <header className="sticky top-0 z-50 border-b border-border bg-surface/90 backdrop-blur-md">
       <div
         className={`mx-auto flex h-14 max-w-wide items-center justify-between gap-4 ${CONTENT_GUTTER}`}
       >
         <div className="flex items-center gap-4">
         <Link
           href="/"
-          className="font-mono text-small font-medium uppercase tracking-[0.06em] text-text"
+          className="rounded-sm px-2 py-1 font-mono text-small font-medium uppercase tracking-[0.06em] text-text transition-colors duration-200 hover:bg-surface-raised hover:text-accent"
         >
           Gladwin<span className="text-accent">.dev</span>
         </Link>
@@ -43,13 +40,15 @@ export function SiteHeader() {
         <SystemStatusServer />
       </div>
 
-        <nav aria-label="Primary" className="hidden items-center gap-6 sm:flex">
-          {PRIMARY_NAV.map((item) => (
-            <NavEntry key={entryKey(item)} item={item} />
-          ))}
-        </nav>
+        <div className="flex items-center gap-3">
+          <nav aria-label="Primary" className="hidden items-center gap-6 sm:flex">
+            {PRIMARY_NAV.map((item) => (
+              <NavEntry key={entryKey(item)} item={item} />
+            ))}
+          </nav>
+          <ThemeToggle />
 
-        <details className="group relative sm:hidden">
+          <details className="group relative sm:hidden">
           <summary
             className={`${buttonClasses('secondary', 'sm')} cursor-pointer list-none [&::-webkit-details-marker]:hidden`}
           >
@@ -70,7 +69,8 @@ export function SiteHeader() {
               <NavEntry key={entryKey(item)} item={item} />
             ))}
           </nav>
-        </details>
+          </details>
+        </div>
       </div>
     </header>
   );
@@ -82,16 +82,10 @@ function entryKey(item: NavItem): string {
 }
 
 /**
- * One navigation entry.
- *
- * A link is followed; an action is performed. Rendering both from one function is
- * what keeps the desktop navigation and the disclosure in agreement without the
- * two maps duplicating a branch.
+ * One navigation entry. Both desktop and mobile layouts use this same renderer.
  */
 function NavEntry({ item }: { item: NavItem }) {
-  if (item.kind === 'action') {
-    return <TerminalTrigger label={item.label} shortcut={item.shortcut} />;
-  }
+  if (item.kind === 'action') return null;
 
   return <NavLink href={item.href} label={item.label} external={item.external} />;
 }

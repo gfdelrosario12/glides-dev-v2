@@ -36,7 +36,7 @@ export function SiteFooter() {
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-mono text-label uppercase tracking-[0.06em] text-text-secondary hover:text-accent"
+                className="rounded-sm px-2 py-1 font-mono text-label uppercase tracking-[0.06em] text-text-secondary transition-colors duration-200 hover:bg-surface-raised hover:text-accent"
               >
                 {link.label}
                 <span className="sr-only"> (opens in a new tab)</span>
@@ -45,7 +45,7 @@ export function SiteFooter() {
               <a
                 key={link.href}
                 href={link.href}
-                className="font-mono text-label uppercase tracking-[0.06em] text-text-secondary hover:text-accent"
+                className="rounded-sm px-2 py-1 font-mono text-label uppercase tracking-[0.06em] text-text-secondary transition-colors duration-200 hover:bg-surface-raised hover:text-accent"
               >
                 {link.label}
               </a>

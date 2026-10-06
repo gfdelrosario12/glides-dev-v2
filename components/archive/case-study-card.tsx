@@ -54,7 +54,7 @@ export function CaseStudyCard({ caseStudy }: { caseStudy: CaseStudy }) {
       </CardContent>
 
       <CardFooter>
-        <Button variant="secondary" size="sm" href={`/projects/${caseStudy.slug}`}>
+        <Button variant="secondary" size="sm" href={`/case-study/${caseStudy.slug}`}>
           Read the case study
         </Button>
         {/* Both of these leave the site, so both are marked as doing so rather

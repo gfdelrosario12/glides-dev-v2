@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { TokenChipList } from '@/components/sections/chip';
 
 import { CredentialVerification, type CredentialVerificationState } from './verification';
+import Link from 'next/link';
 
 /**
  * One credential, as a card on the listing.
@@ -43,12 +44,12 @@ export function CredentialCard({
   const titleId = `credential-${slug}`;
 
   return (
-    <Card labelledBy={titleId}>
+    <Card labelledBy={titleId} className="relative group hover:border-accent/50 transition-colors">
       <CardHeader>
         {/* `level={3}` because the listing's own heading is the level 2 and the card
             titles sit inside it; a card title at level 2 would compete with it. */}
-        <CardTitle id={titleId} level={3}>
-          {title}
+        <CardTitle id={titleId} level={3} className="group-hover:text-accent transition-colors">
+          <Link href={`/credentials/${slug}`} className="before:absolute before:inset-0">{title}</Link>
         </CardTitle>
         <CardDescription>
           {issuer} &middot; acquired {acquiredOn}
@@ -57,12 +58,14 @@ export function CredentialCard({
 
       <CardContent>
         <div className="flex flex-col gap-4">
-          <CredentialVerification
-            state={state}
-            stateLabel={stateLabel}
-            destination={destination}
-            destinationLabel={destinationLabel}
-          />
+          <div className="relative z-10">
+            <CredentialVerification
+              state={state}
+              stateLabel={stateLabel}
+              destination={destination}
+              destinationLabel={destinationLabel}
+            />
+          </div>
 
           {skills.length === 0 ? null : <TokenChipList labels={skills} />}
         </div>

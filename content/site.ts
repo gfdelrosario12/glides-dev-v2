@@ -215,7 +215,7 @@ export interface Action {
 
 export const PRIMARY_ACTION: Action = {
   label: 'See the work',
-  href: sectionHref(SECTION_IDS.featuredWork),
+  href: sectionHref(SECTION_IDS.projects),
   variant: 'primary',
   external: false,
 };

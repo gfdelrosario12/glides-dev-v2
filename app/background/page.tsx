@@ -41,6 +41,7 @@ export const metadata: NextMetadata = {
   title: 'Background',
   description:
     'Recorded study and recorded work: what was operated, with what, and where.',
+  alternates: { canonical: '/background' },
 };
 
 /**
@@ -56,6 +57,7 @@ function entryOf(experience: Experience): TimelineEntry {
     slug: experience.slug,
     render: (
       <ExperienceEntry
+        slug={experience.slug}
         titleId={`${experience.slug}-role`}
         role={experience.title}
         organization={experience.organization}

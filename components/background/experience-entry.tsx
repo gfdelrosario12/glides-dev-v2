@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Metadata, MetadataList } from '@/components/ui/metadata';
 import { TokenChipList } from '@/components/sections/chip';
+import Link from 'next/link';
 
 /**
  * One recorded experience, presented as an operational record.
@@ -24,6 +25,7 @@ import { TokenChipList } from '@/components/sections/chip';
 
 export interface ExperienceEntryProps {
   /** Id for the entry's title element, which also names the card. */
+  readonly slug: string;
   readonly titleId: string;
   /** The role, as recorded. */
   readonly role: string;
@@ -48,6 +50,7 @@ export interface ExperienceEntryProps {
 }
 
 export function ExperienceEntry({
+  slug,
   titleId,
   role,
   organization,
@@ -63,13 +66,13 @@ export function ExperienceEntry({
   caseStudies,
 }: ExperienceEntryProps) {
   return (
-    <Card labelledBy={titleId}>
+    <Card labelledBy={titleId} className="relative group hover:border-accent/50 transition-colors">
       <CardHeader>
         {/* The role leads and the organisation follows, in that order in the
             markup: a visitor scanning twenty entries is looking for what someone
             did before where they did it. */}
-        <CardTitle id={titleId} level={4}>
-          {role}
+        <CardTitle id={titleId} level={4} className="group-hover:text-accent transition-colors">
+          <Link href={`/case-study/${slug}`} className="before:absolute before:inset-0">{role}</Link>
         </CardTitle>
         <CardDescription>{organization}</CardDescription>
       </CardHeader>
@@ -155,8 +158,9 @@ export function ExperienceEntry({
               {caseStudies.map((caseStudy) => (
                 <li key={caseStudy.slug}>
                   <a
+                    className="relative z-10 text-small text-text underline decoration-border-strong underline-offset-4 hover:decoration-text"
                     href={`/projects/${caseStudy.slug}`}
-                    className="text-small text-text underline decoration-border-strong underline-offset-4 hover:decoration-text"
+                    
                   >
                     {caseStudy.title}
                   </a>

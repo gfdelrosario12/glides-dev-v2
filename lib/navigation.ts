@@ -75,6 +75,7 @@ export const SECTION_IDS = {
   focusAreas: 'focus-areas',
   statistics: 'statistics',
   featuredWork: 'featured-work',
+  projects: 'projects',
   connect: 'connect',
 } as const;
 
@@ -90,8 +91,8 @@ export type SectionId = (typeof SECTION_IDS)[keyof typeof SECTION_IDS];
  */
 export const NAVIGABLE_SECTIONS: readonly { readonly id: SectionId; readonly label: string }[] = [
   { id: SECTION_IDS.about, label: 'About' },
-  { id: SECTION_IDS.focusAreas, label: 'Focus' },
-  { id: SECTION_IDS.featuredWork, label: 'Work' },
+  { id: SECTION_IDS.focusAreas, label: 'Certifications' },
+  { id: SECTION_IDS.projects, label: 'Projects' },
 ];
 
 /** A fragment link to a landing-page section. */
@@ -131,7 +132,6 @@ export const PRIMARY_NAV: readonly NavItem[] = [
   // navigation items, which is how a navigation stops being a navigation.
   { kind: 'link', href: '/background', label: 'Background' },
   { kind: 'link', href: '/connect', label: 'Connect' },
-  TERMINAL_ACTION,
 ];
 
 /**

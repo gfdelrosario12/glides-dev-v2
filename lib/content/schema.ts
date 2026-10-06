@@ -257,6 +257,7 @@ export const COLLECTION_IDS = [
   'caseStudyMedia',
   'caseStudySnippets',
   'socialLinks',
+  'projects',
   'experiences',
   'certifications',
   'education',
@@ -855,7 +856,25 @@ export const QUALIFICATION_SCHEMA: CollectionSchema = {
  * runs once every table has been read precisely so that a case study may
  * reference a technology declared later in this list.
  */
+
+export const SIMPLE_PROJECT_SCHEMA: CollectionSchema = {
+  id: 'projects',
+  file: 'projects.csv',
+  record: 'project',
+  identifier: 'title',
+  key: 'slug',
+  fields: {
+    title: { kind: 'text' },
+    description: { kind: 'text' },
+    category: { kind: 'text' },
+    techStack: { kind: 'list' },
+    liveUrl: { kind: 'link', optional: true },
+    githubUrl: { kind: 'link', optional: true },
+  },
+};
+
 export const COLLECTION_SCHEMAS: readonly CollectionSchema[] = [
+  SIMPLE_PROJECT_SCHEMA,
   TECHNOLOGY_SCHEMA,
   SOCIAL_LINK_SCHEMA,
   CASE_STUDY_MEDIA_SCHEMA,

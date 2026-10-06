@@ -156,7 +156,7 @@ The landing page SHALL present featured case studies, and the selection and orde
 - **THEN** it offers a destination to the archive where the remaining ones are listed, so an unfeatured case study is one step away rather than unmentioned
 
 ### Requirement: Primary calls to action are provided
-The landing page SHALL provide at least one primary call to action and SHALL obey the one-primary-per-view rule from the button contract. Each call to action SHALL name its destination, and a call to action whose destination leaves the site SHALL be marked accordingly.
+The landing page SHALL provide at least one primary call to action and SHALL obey the one-primary-per-view rule from the button contract. Each call to action SHALL name its destination, and the landing page's primary work action SHALL point to the Projects section rather than a removed Featured Work section.
 
 #### Scenario: At most one primary action
 
@@ -172,6 +172,10 @@ The landing page SHALL provide at least one primary call to action and SHALL obe
 
 - **WHEN** the calls to action are inspected
 - **THEN** every destination comes from the shared navigation or content declaration rather than being typed into the section
+
+#### Scenario: The primary work action reaches Projects
+- **WHEN** the primary work action is activated
+- **THEN** it navigates to the Projects section on the landing page
 
 ### Requirement: The landing page renders on the server
 The landing page and its sections SHALL render as Server Components. No section SHALL require client-side JavaScript in order to display its content, its figures, or its links.

@@ -18,10 +18,9 @@
  * overlay has to keep in agreement, and when they disagree the failure is a
  * keyboard user reaching invisible content. Here there is one source of truth.
  *
- * One element, two presentations. Below the small breakpoint it is a drawer
- * pinned to the trailing edge and opened with `show()` — non-modal, so no
- * backdrop, shell not inert, header stays reachable. At and above it, `showModal()`.
- * A media query does the rest. See design decisions D1 to D3.
+ * One element, one presentation: a centered modal opened with `showModal()` at
+ * every viewport size. This keeps the terminal from becoming a redundant edge
+ * drawer on narrow screens and gives the close control one lifecycle to manage.
  */
 
 import { useCallback, useEffect, useRef, type ReactNode } from 'react';
@@ -33,9 +32,7 @@ import { useCallback, useEffect, useRef, type ReactNode } from 'react';
  * tracked for a resize, and the CSS box — and a media query in the class list is
  * the only one of those that CSS and JavaScript can both be derived from.
  */
-export const COVERING_QUERY = '(min-width: 40rem)';
-
-export type TerminalMode = 'cover' | 'drawer';
+export type TerminalMode = 'cover';
 
 export interface TerminalDialogProps {
   readonly open: boolean;
@@ -46,13 +43,10 @@ export interface TerminalDialogProps {
 }
 
 /**
- * The presentation the current viewport calls for.
- *
- * This decides the *focus contract* as much as the box: `cover` contains focus
- * and makes the shell inert, `drawer` does neither so the header stays operable.
+ * The terminal always uses the covering modal focus contract.
  */
-function modeFor(wide: boolean): TerminalMode {
-  return wide ? 'cover' : 'drawer';
+function modeFor(): TerminalMode {
+  return 'cover';
 }
 
 export function TerminalDialog({
@@ -101,37 +95,13 @@ export function TerminalDialog({
       return;
     }
 
-    if (dialog.open && modeRef.current === modeFor(window.matchMedia(COVERING_QUERY).matches)) {
+    if (dialog.open && modeRef.current === modeFor()) {
       initialFocusRef.current?.focus();
       return;
     }
 
-    openIn(dialog, modeFor(window.matchMedia(COVERING_QUERY).matches));
+    openIn(dialog, modeFor());
   }, [open, openIn, initialFocusRef]);
-
-  /**
-   * Crossing the breakpoint while the terminal is open.
-   *
-   * The two presentations have different focus contracts, so the element has to
-   * be re-opened rather than restyled: `showModal()` on an open dialog throws, and
-   * staying in the old mode would either leave focus escapable under a covering
-   * panel or make the header inert under a drawer. Re-opening in place keeps the
-   * session, which is what a visitor who rotates their phone did not ask to lose.
-   */
-  useEffect(() => {
-    const media = window.matchMedia(COVERING_QUERY);
-
-    function onChange(): void {
-      const dialog = dialogRef.current;
-      if (dialog === null || !dialog.open) return;
-      const mode = modeFor(media.matches);
-      if (mode === modeRef.current) return;
-      openIn(dialog, mode);
-    }
-
-    media.addEventListener('change', onChange);
-    return () => media.removeEventListener('change', onChange);
-  }, [openIn]);
 
   /**
    * Escape.
@@ -173,14 +143,12 @@ export function TerminalDialog({
   return (
     <dialog
       ref={dialogRef}
+      onClose={onClose}
       aria-label="Terminal"
       /*
-       * Below `sm`: a drawer on the trailing edge, full height, no backdrop.
-       * `100dvh` rather than `100vh` because a mobile browser's `100vh` exceeds
-       * the visible area behind its own chrome, which would push the prompt off
-       * screen. At and above `sm`: a centred panel with the backdrop dimming the
-       * page — `showModal()` renders `::backdrop` and `show()` does not, so the
-       * backdrop rule needs no mode-specific handling.
+      * The dialog is a centered panel at every viewport size, with the backdrop
+      * dimming the page. `showModal()` renders `::backdrop` and keeps the shell
+      * beneath it inert while the terminal is active.
        *
        * Both widths are declared values: `max-w-prose` is the token layer's own
        * container step, and `100ch` is the character width of the mono face, so
@@ -198,9 +166,9 @@ export function TerminalDialog({
        * this element's surfaces.
        */
       className={[
-        'm-0 ml-auto flex h-[100dvh] w-full flex-col',
-        'border border-border bg-surface-raised p-0 font-mono text-small text-text',
-        'sm:m-auto sm:h-[85dvh] sm:max-w-prose sm:rounded-md sm:bg-surface-overlay',
+        'm-auto flex h-[min(85dvh,42rem)] w-[calc(100%-2rem)] max-w-prose flex-col',
+        'rounded-md border border-border bg-surface-raised p-0 font-mono text-small text-text',
+        'sm:bg-surface-overlay',
         'backdrop:bg-surface/80',
       ].join(' ')}
     >

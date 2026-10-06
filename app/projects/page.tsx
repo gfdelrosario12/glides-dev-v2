@@ -36,6 +36,7 @@ export const metadata: NextMetadata = {
   title: 'Case studies',
   description:
     'Every published case study, with the technologies each was built from and the address of its own page.',
+  alternates: { canonical: '/projects' },
 };
 
 /**

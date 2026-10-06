@@ -13,6 +13,7 @@ import { cn } from '@/lib/cn';
  */
 
 export interface CardProps {
+  className?: string;
   /**
    * Id of the element that names this card. When supplied, the card is
    * exposed as a labelled region using that element as its accessible name.
@@ -21,12 +22,13 @@ export interface CardProps {
   children: React.ReactNode;
 }
 
-export function Card({ labelledBy, children }: CardProps) {
+export function Card({ labelledBy, className, children }: CardProps) {
   return (
     <section
       aria-labelledby={labelledBy}
       className={cn(
-        'flex min-w-0 flex-col rounded-md border border-border bg-surface-raised',
+        'flex min-w-0 flex-col rounded-md border border-border bg-surface-raised transition-colors duration-200 hover:border-border-strong hover:bg-surface-overlay',
+        className
       )}
     >
       {children}
@@ -39,16 +41,18 @@ export function CardHeader({ children }: { children: React.ReactNode }) {
 }
 
 export interface CardTitleProps {
+  className?: string;
   id?: string;
   /** Heading level, so the card title nests correctly in the page outline. */
   level?: 2 | 3 | 4 | 5 | 6;
   children: React.ReactNode;
 }
 
-export function CardTitle({ id, level = 3, children }: CardTitleProps) {
+export function CardTitle({ id, level = 3, className, children }: CardTitleProps) {
+  
   const Tag = `h${level}` as const;
   return (
-    <Tag id={id} className="text-title font-medium text-text">
+    <Tag id={id} className={cn("text-title font-medium text-text", className)}>
       {children}
     </Tag>
   );

@@ -246,6 +246,7 @@ export interface Statistics {
   readonly distinctCloudPlatforms: number;
   /** Whole years from the earliest recorded role start to the present. */
   readonly yearsOfPractice: number;
+  readonly techExpertise: { name: string; count: number }[];
 }
 
 export interface Derivation {
@@ -423,6 +424,34 @@ function derive(): Derivation {
   }
 
   const technologies = technologiesInUse(caseStudies, experiences);
+  const techCounts = new Map<string, { name: string, count: number }>();
+  for (const caseStudy of caseStudies) {
+    for (const tech of caseStudy.technologies) {
+       const existing = techCounts.get(tech.key) || { name: tech.name, count: 0 };
+       existing.count++;
+       techCounts.set(tech.key, existing);
+    }
+  }
+  for (const experience of experiences) {
+    for (const tech of [...experience.tools, ...experience.systems]) {
+       const existing = techCounts.get(tech.key) || { name: tech.name, count: 0 };
+       existing.count++;
+       techCounts.set(tech.key, existing);
+    }
+  }
+  for (const project of CONTENT.projects || []) {
+    for (const techName of project.techStack) {
+       const key = techName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+       const existing = techCounts.get(key) || { name: techName, count: 0 };
+       existing.count++;
+       techCounts.set(key, existing);
+    }
+  }
+  
+  const techExpertise = Array.from(techCounts.values())
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 4);
+
 
   // Featured is a selection of what exists, so it is drawn from the published set
   // rather than from every case study. A draft with a display order would
@@ -454,6 +483,7 @@ function derive(): Derivation {
       // than a silently different number.
       distinctCloudPlatforms: CLOUD_PROVIDER_IDS.filter((id) => platforms.has(id)).length,
       yearsOfPractice: earliest === null ? 0 : wholeYearsBetween(earliest, today()),
+      techExpertise,
     },
     featuredCaseStudies: featured,
     publishedCaseStudies: published,

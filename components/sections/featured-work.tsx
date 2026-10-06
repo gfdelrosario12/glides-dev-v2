@@ -45,9 +45,11 @@ export function FeaturedWork({ caseStudies, totalAvailable }: FeaturedWorkProps)
           Featured work
         </h2>
         <p className="max-w-prose text-body text-text-secondary">
-          {omitted > 0
-            ? `A selection of ${caseStudies.length} from ${totalAvailable} case studies. The remaining ${omitted} are listed in full on the case-studies archive.`
-            : `All ${totalAvailable} case studies, in the order they are declared.`}
+          {caseStudies.length === 0
+            ? 'Empty channel.'
+            : omitted > 0
+              ? 'Selected signal. More work is available in the archive.'
+              : 'Complete signal.'}
         </p>
 
         {/* Offered only when there is something the selection does not show.
@@ -56,7 +58,7 @@ export function FeaturedWork({ caseStudies, totalAvailable }: FeaturedWorkProps)
         {omitted > 0 ? (
           <p className="flex">
             <Button variant="secondary" size="sm" href="/projects">
-              Browse all {totalAvailable} case studies
+              Browse archive
             </Button>
           </p>
         ) : null}

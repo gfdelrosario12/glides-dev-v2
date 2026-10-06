@@ -148,20 +148,48 @@
     Consolas, "Liberation Mono", monospace;
 }
 
+/* Light mode keeps the same semantic roles while changing only their values. */
+:root[data-theme='light'] {
+  --color-surface: #f4f1e8;
+  --color-surface-raised: #fffdf7;
+  --color-surface-inset: #e9e5da;
+  --color-surface-overlay: #ffffff;
+  --color-text: #20252b;
+  --color-text-secondary: #4c5661;
+  --color-text-muted: #69737c;
+  --color-accent: #a85f00;
+  --color-accent-hover: #7f4600;
+  --color-accent-subtle: #f5dfbd;
+  --color-on-accent: #fffdf7;
+  --color-success: #147447;
+  --color-warning: #856c00;
+  --color-destructive: #b42332;
+  --color-info: #145a9c;
+  --color-border: #d6d1c5;
+  --color-border-strong: #737a80;
+}
+
 @layer base {
   /*
-   * `color-scheme: dark` is load-bearing for a dark-only system: it makes the
-   * canvas, scrollbars, and native control internals render dark instead of
-   * flashing a light surface. There is no light theme and no
-   * `prefers-color-scheme` branch anywhere in this project.
+  * The default scheme keeps the canvas, scrollbars, and native controls dark;
+  * the root data attribute switches every semantic role to light mode.
    */
   html {
     color-scheme: dark;
     background-color: var(--color-surface);
   }
 
+  html[data-theme='light'] {
+    color-scheme: light;
+  }
+
   body {
     background-color: var(--color-surface);
+    background-image:
+      radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--color-accent) 8%, transparent), transparent 34rem),
+      radial-gradient(circle at 88% 24%, color-mix(in srgb, var(--color-info) 5%, transparent), transparent 30rem);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
     color: var(--color-text);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;

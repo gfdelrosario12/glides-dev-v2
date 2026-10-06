@@ -31,6 +31,7 @@ import {
   CASE_STUDY_MEDIA_SCHEMA,
   CERTIFICATION_SCHEMA,
   COLLECTION_SCHEMAS,
+  SIMPLE_PROJECT_SCHEMA,
   EXPERIENCE_SCHEMA,
   PROJECT_SCHEMA,
   QUALIFICATION_SCHEMA,
@@ -266,6 +267,17 @@ export interface CaseStudy {
  * Experience
  * ------------------------------------------------------------------ */
 
+
+export interface Project {
+  readonly slug: string;
+  readonly title: string;
+  readonly description: string;
+  readonly category: string;
+  readonly techStack: readonly string[];
+  readonly liveUrl: string | null;
+  readonly githubUrl: string | null;
+}
+
 export interface Experience {
   /**
    * The addressable segment, declared in the content file rather than derived from
@@ -445,6 +457,7 @@ export interface Education {
  * ------------------------------------------------------------------ */
 
 export interface ContentModel {
+  readonly projects: readonly Project[];
   readonly caseStudies: readonly CaseStudy[];
   readonly technologies: readonly Technology[];
   readonly socialLinks: readonly SocialLink[];
@@ -474,11 +487,48 @@ function verbatimFieldsOf(schema: CollectionSchema): ReadonlySet<string> {
 }
 
 function readTable(schema: CollectionSchema): CsvTable {
-  return parseCsv(
+  const table = parseCsv(
     readFileSync(join(process.cwd(), CONTENT_DIR, schema.file), 'utf8'),
     schema.file,
     verbatimFieldsOf(schema),
   );
+
+  if (schema.file === 'experiences.csv' && table.header.includes('duration') && table.header.includes('type')) {
+    const newHeader = ['slug', 'track', 'title', 'organization', 'badgeLabel', 'startDate', 'endDate', 'responsibilities', 'lessonsLearned', 'tools', 'systems', 'caseStudies', 'location', 'description'];
+    const newRows = table.rows.map(row => {
+      const v = row.values;
+      const slug = (v.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Math.random().toString(36).substring(2, 7);
+      let track = 'professional';
+      if (v.type === 'organizational') track = 'leadership';
+      else if (v.type === 'competetive' || v.type === 'competitive') track = 'technical';
+      else if (v.badgeLabel === 'Volunteering') track = 'community';
+      const parts = (v.duration || '').split('-');
+      const sDate = parts[0] ? parts[0].trim() : '2020-01';
+      const eDate = parts[1] && parts[1].trim().toLowerCase() !== 'present' ? parts[1].trim() : '';
+      return {
+        line: row.line,
+        arity: 'match' as const,
+        values: { slug, track, title: v.title || '', organization: v.organization || '', badgeLabel: 'Member', startDate: sDate, endDate: eDate, responsibilities: '', lessonsLearned: '', tools: v.skills || '', systems: '', caseStudies: '', location: v.location || '', description: v.description || '' }
+      };
+    });
+    return { header: newHeader, rows: newRows };
+  }
+
+  if (schema.file === 'certifications.csv' && table.header.includes('year') && table.header.includes('color')) {
+    const newHeader = ['slug', 'issuer', 'acquiredOn', 'expiration', 'description', 'verificationUrl', 'verificationKind', 'credentialId', 'skills'];
+    const newRows = table.rows.map(row => {
+      const v = row.values;
+      const slug = (v.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Math.random().toString(36).substring(2, 7);
+      return {
+        line: row.line,
+        arity: 'match' as const,
+        values: { slug, issuer: v.organization || '', acquiredOn: v.year ? v.year + '-01' : '2020-01', expiration: '', description: v.description || '', verificationUrl: v.url || '', verificationKind: 'Link', credentialId: '', skills: '' }
+      };
+    });
+    return { header: newHeader, rows: newRows };
+  }
+
+  return table;
 }
 
 function sourceFor(schema: CollectionSchema, line: number, id: string): ContentSource {
@@ -748,6 +798,23 @@ function assemble(): ContentModel {
   const snippets = buildSnippets(rowsOf(CASE_STUDY_SNIPPET_SCHEMA));
   const education = buildEducation(rowsOf(QUALIFICATION_SCHEMA));
 
+  const projects = rowsOf(SIMPLE_PROJECT_SCHEMA).map((row): Project => {
+    const field = (name: string) => row.values[name];
+    const rawList = (field('techStack') || '') as string;
+    const techStack = rawList ? rawList.split('|').map(s => s.trim()).filter(Boolean) : [];
+    
+    return {
+      slug: (field('title') || '').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      title: field('title') || '',
+      description: field('description') || '',
+      category: field('category') || '',
+      techStack,
+      liveUrl: field('liveUrl') || null,
+      githubUrl: field('githubUrl') || null,
+    };
+  });
+
+
   const resolveTechnologies = (keys: readonly string[]): readonly Technology[] =>
     keys.map((key) => technologyByKey.get(key) as Technology);
 
@@ -823,6 +890,7 @@ function assemble(): ContentModel {
     socialLinks,
     caseStudyMedia: media,
     caseStudySnippets: snippets,
+    projects,
     experiences,
     certifications,
     education,

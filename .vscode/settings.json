@@ -1,0 +1,56 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^openspec list --json$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^openspec status --change \"visual-cleanup\" --json$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^openspec instructions apply --change \"visual-cleanup\" --json$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^openspec instructions archive --change \"visual-cleanup\" --json$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^openspec instructions specs --change \"visual-cleanup\" --json$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^openspec validate --specs$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^openspec validate app-shell --type spec$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^openspec new change \"implementation-reconciliation\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^openspec status --change \"implementation-reconciliation\" --json$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^openspec instructions proposal --change \"implementation-reconciliation\" --json$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^openspec instructions specs --change \"implementation-reconciliation\" --json$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^openspec instructions design --change \"implementation-reconciliation\" --json$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^openspec instructions tasks --change \"implementation-reconciliation\" --json$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

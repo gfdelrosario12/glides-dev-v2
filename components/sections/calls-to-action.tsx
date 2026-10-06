@@ -1,5 +1,4 @@
-import { Button, buttonClasses } from '@/components/ui/button';
-import type { Action } from '@/content/site';
+import { Button } from '@/components/ui/button';
 import { SECTION_IDS } from '@/lib/navigation';
 
 /**
@@ -12,23 +11,6 @@ import { SECTION_IDS } from '@/lib/navigation';
  * primitive uses, not a second copy of it — and both `variant` and `note` are
  * honoured here rather than being declared in the content and then discarded.
  */
-function ActionLink({ action }: { action: Action }) {
-  return (
-    <a
-      href={action.href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={buttonClasses(action.variant, 'md')}
-    >
-      {action.label}
-      <span aria-hidden="true" className="text-text-muted">
-        &#8599;
-      </span>
-      <span className="sr-only"> ({action.note ?? 'Opens in a new tab'})</span>
-    </a>
-  );
-}
-
 /**
  * The closing actions.
  *
@@ -39,7 +21,7 @@ function ActionLink({ action }: { action: Action }) {
  * The note that an external link leaves the site is present visually as well as
  * in the accessible name, so it is not carried by a target attribute alone.
  */
-export function CallsToAction({ actions }: { actions: readonly Action[] }) {
+export function CallsToAction() {
   return (
     <section
       id={SECTION_IDS.connect}
@@ -48,24 +30,17 @@ export function CallsToAction({ actions }: { actions: readonly Action[] }) {
     >
       <div className="flex flex-col gap-2">
         <h2 id="connect-heading" className="text-title font-medium text-text">
-          Get in touch
+          Let&apos;s connect
         </h2>
         <p className="max-w-prose text-body text-text-secondary">
-          The fastest route to me is email. GitHub and LinkedIn are open if you
-          would rather start there.
+          Good work starts with a good conversation. Find every direct channel in one place.
         </p>
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        {actions.map((action) =>
-          action.external ? (
-            <ActionLink key={action.label} action={action} />
-          ) : (
-            <Button key={action.label} variant={action.variant} href={action.href}>
-              {action.label}
-            </Button>
-          ),
-        )}
+        <Button variant="primary" href="/connect">
+          Open social hub
+        </Button>
       </div>
     </section>
   );

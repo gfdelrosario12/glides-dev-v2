@@ -1,6 +1,6 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { TokenChipList } from './chip';
-import type { FocusAreaEvidence } from '@/lib/content/derive';
+import { CredentialCard } from '@/components/credentials/card';
+import { credentials } from '@/lib/content/model';
+import { credentialCardProps, today } from '@/lib/content/credential-presentation';
 import { SECTION_IDS } from '@/lib/navigation';
 
 /**
@@ -15,7 +15,10 @@ import { SECTION_IDS } from '@/lib/navigation';
  * nothing — and printing `0` next to a summary would assert a conclusion the
  * content does not support.
  */
-export function FocusAreas({ focusAreas }: { focusAreas: readonly FocusAreaEvidence[] }) {
+export function FocusAreas() {
+  const certifications = credentials();
+  const asOf = today();
+
   return (
     <section
       id={SECTION_IDS.focusAreas}
@@ -23,47 +26,30 @@ export function FocusAreas({ focusAreas }: { focusAreas: readonly FocusAreaEvide
       className="flex scroll-mt-16 flex-col gap-6"
     >
       <div className="flex flex-col gap-2">
+        <p className="font-mono text-label uppercase tracking-[0.06em] text-text-muted">
+          Credentials / verified record
+        </p>
         <h2 id="focus-heading" className="text-title font-medium text-text">
-          Focus
+          Certifications
         </h2>
         <p className="max-w-prose text-body text-text-secondary">
-          Each area is stated with the records that back it. The count is of
-          distinct records, so one record evidencing two signals in the same area
-          is still one record.
+          A compact register of the platforms, systems, and practices I have studied.
         </p>
       </div>
 
-      <ul className="grid gap-4 lg:grid-cols-3">
-        {focusAreas.map((area) => {
-          const titleId = `focus-${area.id}`;
-
-          return (
-            <li key={area.id} className="min-w-0">
-              <Card labelledBy={titleId}>
-                <CardHeader>
-                  <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <CardTitle id={titleId} level={3}>
-                      {area.label}
-                    </CardTitle>
-                    {area.count > 0 ? (
-                      <p className="font-mono text-small text-accent">
-                        {area.count} {area.count === 1 ? 'record' : 'records'}
-                      </p>
-                    ) : null}
-                  </div>
-                  <CardDescription>{area.summary}</CardDescription>
-                </CardHeader>
-
-                {area.signals.length > 0 ? (
-                  <CardContent>
-                    <TokenChipList labels={area.signals.map((signal) => signal.label)} />
-                  </CardContent>
-                ) : null}
-              </Card>
+      {certifications.length === 0 ? (
+        <div className="border border-dashed border-border-strong bg-surface-inset p-6 font-mono text-small text-text-muted">
+          Empty register.
+        </div>
+      ) : (
+        <ul className="grid gap-4 lg:grid-cols-3">
+          {certifications.map((certification) => (
+            <li key={certification.slug} className="min-w-0">
+              <CredentialCard {...credentialCardProps(certification, asOf)} />
             </li>
-          );
-        })}
-      </ul>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }

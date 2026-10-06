@@ -6,7 +6,7 @@ Defines the single source of truth for the Gladwin.dev dark charcoal design syst
 
 ### Requirement: Dark-only surface hierarchy
 
-The system SHALL expose exactly four surface roles, ordered by elevation, and SHALL render the page in the dark direction unconditionally. The system SHALL NOT respond to a `prefers-color-scheme: light` preference and SHALL NOT ship a light theme.
+The system SHALL expose exactly four surface roles, ordered by elevation, and SHALL render the page in dark mode by default. The user SHALL also be able to switch the interface to a light mode that preserves the same semantic roles. The system SHALL NOT rely on the operating system preference alone to choose the theme.
 
 | Role | Value | OKLCH |
 | --- | --- | --- |
@@ -15,10 +15,20 @@ The system SHALL expose exactly four surface roles, ordered by elevation, and SH
 | `surface-inset` | `#1A1D22` | `oklch(0.230 0.011 261)` |
 | `surface-overlay` | `#22262C` | `oklch(0.267 0.013 258)` |
 
-#### Scenario: Page renders dark regardless of OS preference
+#### Scenario: Page renders dark by default
 
 - **WHEN** a visitor whose operating system requests a light color scheme loads any route
-- **THEN** the page background is the `surface` value `#0B0C0E` and no light-theme token set is applied
+- **THEN** the interface renders in dark mode using the semantic token roles
+
+#### Scenario: Theme can be switched
+
+- **WHEN** a visitor activates the theme control
+- **THEN** every page surface, text role, border, and native color-scheme control changes to the selected light or dark mode
+
+#### Scenario: Theme preference persists
+
+- **WHEN** a visitor selects a theme and opens another route or reloads the page
+- **THEN** the selected theme remains active
 
 #### Scenario: No pure black or pure white is present
 

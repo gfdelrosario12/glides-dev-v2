@@ -42,7 +42,7 @@ export function SystemStatus({ metrics }: SystemStatusProps) {
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75"></span>
           <span className="relative inline-flex h-2 w-2 rounded-full bg-success"></span>
         </span>
-        <span className="hidden sm:inline">System Status</span>
+        <span className="hidden sm:inline">Active</span>
       </button>
 
       {isOpen && (
@@ -50,8 +50,8 @@ export function SystemStatus({ metrics }: SystemStatusProps) {
           id="system-status-panel"
           className="absolute left-0 sm:left-auto sm:right-0 top-full mt-2 w-64 origin-top-left sm:origin-top-right rounded-md border border-border bg-surface-overlay p-4 shadow-lg text-sm z-50 animate-in fade-in zoom-in-95 duration-200"
         >
-          <h3 className="mb-3 font-mono text-xs font-semibold uppercase tracking-wider text-text-secondary">
-            Operational Metrics
+            <h3 className="mb-3 font-mono text-xs font-semibold uppercase tracking-wider text-text-secondary">
+            Active / system metrics
           </h3>
           <ul className="flex flex-col gap-2">
             {metrics.map((metric) => (
@@ -62,7 +62,7 @@ export function SystemStatus({ metrics }: SystemStatusProps) {
             ))}
             <li className="mt-2 flex items-center justify-between border-t border-border pt-2 font-mono">
               <span className="text-text-muted">Status</span>
-              <span className="font-medium text-success">ONLINE</span>
+              <span className="font-medium text-success">ACTIVE</span>
             </li>
           </ul>
         </div>

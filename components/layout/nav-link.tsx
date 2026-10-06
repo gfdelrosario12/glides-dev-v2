@@ -35,7 +35,7 @@ export function NavLink({ href, label, external, placement }: NavLinkProps) {
   ) : null;
 
   const classes = cn(
-    'inline-flex items-center gap-2 font-mono text-label uppercase tracking-[0.06em]',
+    'inline-flex items-center gap-2 rounded-sm px-2 py-1 font-mono text-label uppercase tracking-[0.06em] transition-colors duration-200 hover:bg-surface-raised',
     isCurrent ? 'text-accent' : 'text-text-secondary hover:text-text',
     placement,
   );

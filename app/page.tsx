@@ -1,13 +1,18 @@
-import { Biography } from '@/components/sections/biography';
 import { CallsToAction } from '@/components/sections/calls-to-action';
 import { EducationSummary } from '@/components/sections/education-summary';
-import { FeaturedWork } from '@/components/sections/featured-work';
 import { FocusAreas } from '@/components/sections/focus-areas';
 import { Hero } from '@/components/sections/hero';
-import { StatisticsBand } from '@/components/sections/statistics';
-import { SECONDARY_ACTIONS } from '@/content/site';
+import { InfrastructureExpertise } from '@/components/sections/expertise';
+import { MotionSection } from '@/components/layout/motion-section';
+import { ProjectsBand } from '@/components/sections/projects';
 import { DERIVED } from '@/lib/content/derive';
 import { SECTION_RHYTHM } from '@/lib/layout';
+
+export const metadata = {
+  title: 'Infrastructure, Cloud & Cybersecurity Engineer',
+  description:
+    'Gladwin Ferdz Del Rosario builds and operates cloud, networking, cybersecurity, and IT infrastructure.',
+};
 
 /**
  * The landing page. A Server Component, and entirely server-rendered.
@@ -27,16 +32,24 @@ import { SECTION_RHYTHM } from '@/lib/layout';
 export default function Home() {
   return (
     <div className={`py-12 ${SECTION_RHYTHM}`}>
-      <Hero />
-      <Biography />
-      <EducationSummary />
-      <FocusAreas focusAreas={DERIVED.focusAreas} />
-      <FeaturedWork
-        caseStudies={DERIVED.featuredCaseStudies}
-        totalAvailable={DERIVED.statistics.caseStudyCount}
-      />
-      <StatisticsBand statistics={DERIVED.statistics} />
-      <CallsToAction actions={SECONDARY_ACTIONS} />
+      <MotionSection>
+        <Hero />
+      </MotionSection>
+      <MotionSection>
+        <InfrastructureExpertise focusAreas={DERIVED.focusAreas} />
+      </MotionSection>
+      <MotionSection>
+        <EducationSummary />
+      </MotionSection>
+      <MotionSection>
+        <FocusAreas />
+      </MotionSection>
+      <MotionSection>
+        <ProjectsBand />
+      </MotionSection>
+      <MotionSection>
+        <CallsToAction />
+      </MotionSection>
     </div>
   );
 }
