@@ -168,7 +168,7 @@ const LANGUAGE_TELEMETRY: readonly LanguageTelemetry[] = [
   },
 ];
 
-function CircularLevel({ level, size = 46 }: { level: number; size?: number }) {
+function CircularLevel({ level, size = 44 }: { level: number; size?: number }) {
   const strokeWidth = 3.5;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -187,7 +187,7 @@ function CircularLevel({ level, size = 46 }: { level: number; size?: number }) {
 
   return (
     <div
-      className="relative flex shrink-0 items-center justify-center"
+      className="relative flex shrink-0 items-center justify-center pt-0.5"
       style={{ width: size, height: size }}
       role="progressbar"
       aria-valuenow={level}
@@ -346,7 +346,7 @@ export function ExpertiseSummary(props?: ExpertiseSummaryProps) {
                 className="flex flex-col justify-between rounded-sm border border-border bg-surface-raised p-4 transition-colors duration-200 hover:border-accent hover:bg-surface-overlay w-full max-w-xl mx-auto sm:max-w-none"
               >
                 <div>
-                  <div className="flex items-baseline justify-between gap-3">
+                  <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
                     <div className="min-w-0">
                       <p className="font-mono text-label uppercase tracking-[0.06em] text-text-muted">
                         [{indexStr}] {domain.id}
@@ -363,7 +363,7 @@ export function ExpertiseSummary(props?: ExpertiseSummaryProps) {
                     </div>
                   </div>
 
-                  <p className="mt-1 font-mono text-[11px] text-accent/90">
+                  <p className="mt-1 font-mono text-[11px] text-accent/90 break-words">
                     {domain.platforms}
                   </p>
 
@@ -426,13 +426,13 @@ export function ExpertiseSummary(props?: ExpertiseSummaryProps) {
 
         {/* Circular Language Telemetry Level Shower */}
         <div className="mt-6 border-t border-border pt-5">
-          <div className="flex items-baseline justify-between gap-4">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
             <div>
               <p className="font-mono text-label uppercase tracking-[0.06em] text-text-muted">
                 Programming Languages // Telemetry Exposure
               </p>
             </div>
-            <span className="font-mono text-label text-accent">{LANGUAGE_TELEMETRY.length} tracked</span>
+            <span className="shrink-0 font-mono text-label text-accent">{LANGUAGE_TELEMETRY.length} tracked</span>
           </div>
 
           <div
@@ -445,22 +445,22 @@ export function ExpertiseSummary(props?: ExpertiseSummaryProps) {
                 <div
                   key={lang.name}
                   role="listitem"
-                  className="flex items-center gap-2.5 sm:gap-3.5 rounded-sm border border-border bg-surface-raised p-2.5 sm:p-3 transition-colors hover:border-accent hover:bg-surface-overlay w-full max-w-xl mx-auto sm:max-w-none"
+                  className="flex items-start gap-3 rounded-sm border border-border bg-surface-raised p-3 transition-colors hover:border-accent hover:bg-surface-overlay w-full max-w-xl mx-auto sm:max-w-none"
                 >
                   <CircularLevel level={lang.indexScore} />
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center justify-between gap-2">
-                      <h4 className="font-mono text-small font-medium text-text truncate">
+                    <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5">
+                      <h4 className="font-mono text-small font-medium text-text">
                         {lang.name}
                       </h4>
-                      <span className="font-mono text-[10px] text-accent font-semibold">
+                      <span className="shrink-0 font-mono text-[10px] text-accent font-semibold">
                         {lang.indexScore} / 100
                       </span>
                     </div>
-                    <p className="mt-0.5 truncate font-mono text-[11px] text-text-secondary">
+                    <p className="mt-1 font-mono text-[11px] leading-relaxed text-text-secondary break-words">
                       {lang.domain}
                     </p>
-                    <p className="mt-1 truncate font-mono text-[10px] text-text-muted">
+                    <p className="mt-1 font-mono text-[10px] leading-relaxed text-text-muted break-words">
                       {lang.evidenceText}
                     </p>
                   </div>

@@ -1,7 +1,5 @@
-## Purpose
+## MODIFIED Requirements
 
-Visually represents technical focus areas and expertise as an interconnected, sliding infrastructure diagram rather than generic numerical progress bars.
-## Requirements
 ### Requirement: Expertise is visualized as a connected infrastructure topology and circular language telemetry
 
 The system SHALL display technical domains in an "Expertise Summary" section. Numerical scores (0–100) SHALL represent an "Experience Index" derived from verifiable portfolio evidence (documented projects, industry roles, certifications, and deployed systems) rather than arbitrary skill claims. The methodology SHALL be discoverable via an interactive explanation component, and each domain card SHALL display its underlying evidence counts. Programming languages SHALL be presented with circular telemetry gauges (0–100) with color-coded status rings, and SHALL remain responsive without horizontal overflow, text clipping, or overlapping content across narrow mobile widths down to 320px.
@@ -17,11 +15,3 @@ The system SHALL display technical domains in an "Expertise Summary" section. Nu
 #### Scenario: Programming language telemetry on narrow mobile screens
 - **WHEN** the programming languages telemetry section is viewed on viewports from 320px to 480px
 - **THEN** each language card fits its container without horizontal overflow, the circular gauge is top-aligned, titles and scores wrap gracefully, and domain and evidence descriptions wrap cleanly without clipping
-
-### Requirement: Expertise visualization adapts to touch devices and vertical mobile flow
-The infrastructure expertise and skillset section SHALL render as a cohesive system across screen sizes. On small screens, nodes SHALL stack in a vertical dependency sequence with clear calibrated metrics and readable summaries, rather than cramped horizontal columns.
-
-#### Scenario: Viewing expertise on mobile
-- **WHEN** a user scrolls to the expertise section on a mobile screen
-- **THEN** each technical domain card presents legible status and metrics without requiring mouse hover
-

@@ -25,7 +25,7 @@ import { MobileNavDrawer } from './mobile-nav-drawer';
  */
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-surface/90 pt-[env(safe-area-inset-top)] backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-surface/90 pt-[env(safe-area-inset-top)] backdrop-blur-md">
       <div
         className={`mx-auto flex min-h-14 max-w-wide items-center justify-between gap-2 py-2 ${CONTENT_GUTTER}`}
       >

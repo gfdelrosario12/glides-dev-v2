@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useIsMounted } from '@/lib/hooks/use-mounted';
 import { buttonClasses } from '@/components/ui/button';
 
 export interface MobileNavItem {
@@ -13,6 +15,7 @@ export interface MobileNavItem {
 
 export function MobileNavDrawer({ items }: { items: readonly MobileNavItem[] }) {
   const [isOpen, setIsOpen] = useState(false);
+  const mounted = useIsMounted();
   const pathname = usePathname();
   const [prevPathname, setPrevPathname] = useState(pathname);
   const drawerRef = useRef<HTMLDivElement>(null);
@@ -42,17 +45,16 @@ export function MobileNavDrawer({ items }: { items: readonly MobileNavItem[] }) 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
     if (isOpen) {
+      const originalOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
     }
-    return () => {
-      document.body.style.overflow = '';
-    };
   }, [isOpen]);
 
   return (
-    <div className="relative sm:hidden">
+    <div className="sm:hidden">
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
@@ -76,18 +78,22 @@ export function MobileNavDrawer({ items }: { items: readonly MobileNavItem[] }) 
 
       {isOpen && (
         <>
-          {/* Backdrop */}
-          <div
-            onClick={() => setIsOpen(false)}
-            aria-hidden="true"
-            className="fixed inset-0 z-40 bg-surface/80 backdrop-blur-sm animate-in fade-in duration-200"
-          />
+          {/* Backdrop rendered via portal to body to avoid header containing-block constraint */}
+          {mounted &&
+            createPortal(
+              <div
+                onClick={() => setIsOpen(false)}
+                aria-hidden="true"
+                className="fixed inset-0 z-40 bg-surface/80 backdrop-blur-xs animate-in fade-in duration-200 sm:hidden"
+              />,
+              document.body,
+            )}
 
-          {/* Drawer Panel */}
+          {/* Drawer Panel positioned directly beneath sticky navbar */}
           <div
             id="mobile-nav-panel"
             ref={drawerRef}
-            className="fixed inset-x-0 top-14 z-50 max-h-[calc(100svh-3.5rem)] overflow-y-auto border-b border-border bg-surface-overlay p-4 shadow-xl animate-in slide-in-from-top-2 duration-200"
+            className="absolute inset-x-0 top-full z-50 max-h-[calc(100dvh-100%)] overflow-y-auto border-b border-border bg-surface-overlay p-4 shadow-2xl animate-in slide-in-from-top-2 duration-200 sm:hidden"
           >
             <div className="mb-3 flex items-center justify-between border-b border-border pb-2">
               <span className="font-mono text-label uppercase tracking-[0.06em] text-text-muted">
