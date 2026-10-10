@@ -3,8 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { buttonClasses } from '@/components/ui/button';
 
-const BOOT_KEY = 'gladwin_dev_boot_completed';
-
 const BOOT_MESSAGES = [
   'INITIALIZING SYSTEM INTERFACE...',
   'LOADING PROFILE DATA...',
@@ -18,17 +16,15 @@ export function BootSequence() {
   const [step, setStep] = useState(0);
 
   useEffect(() => {
-    // Only run on client
-    const isCompleted = localStorage.getItem(BOOT_KEY);
+    // Only run on client if user has not requested reduced motion
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    if (isCompleted !== 'true' && !prefersReducedMotion) {
+    if (!prefersReducedMotion) {
       setTimeout(() => setIsVisible(true), 0);
     }
   }, []);
 
   const completeSequence = useCallback(() => {
-    localStorage.setItem(BOOT_KEY, 'true');
     setIsVisible(false);
   }, []);
 

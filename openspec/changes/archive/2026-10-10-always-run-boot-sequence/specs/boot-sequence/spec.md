@@ -1,8 +1,5 @@
-# boot-sequence Specification
+## MODIFIED Requirements
 
-## Purpose
-Provides an engaging, lightweight initialization experience for first-time visitors simulating a system boot sequence.
-## Requirements
 ### Requirement: Boot sequence presents lightweight initialization messages
 The system SHALL display a short boot sequence overlay showing initialization messages such as loading the interface, profile, case studies, and credentials when the page is opened.
 
@@ -20,11 +17,3 @@ The boot sequence SHALL provide a clear method to skip the initialization, dismi
 #### Scenario: Returning visitor bypasses the full sequence
 - **WHEN** a user triggers the skip action
 - **THEN** the boot sequence is dismissed immediately
-
-### Requirement: Boot sequence respects reduced-motion preferences
-The boot sequence SHALL strictly adhere to the `prefers-reduced-motion` media query. If reduced motion is requested, the sequence SHALL be skipped or presented without animation.
-
-#### Scenario: Reduced motion preference is honored
-- **WHEN** a user with `prefers-reduced-motion` set visits the site for the first time
-- **THEN** the boot sequence avoids animations or skips entirely
-
