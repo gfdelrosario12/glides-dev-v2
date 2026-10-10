@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { IBM_Plex_Mono, IBM_Plex_Sans } from 'next/font/google';
 import { BootSequence } from '@/components/boot-sequence';
 import { PageShell } from '@/components/layout/page-shell';
+import { Analytics } from '@vercel/analytics/next';
 import { PROFILE } from '@/content/site';
 import { CONTENT } from '@/lib/content/model';
 import './globals.css';
@@ -176,6 +177,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
         />
         <BootSequence />
         <PageShell>{children}</PageShell>
+        <Analytics />
       </body>
     </html>
   );
