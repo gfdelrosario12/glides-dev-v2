@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import { CONTENT } from '@/lib/content/model';
 import { SECTION_IDS } from '@/lib/navigation';
 import { ReadableDescription } from '@/components/ui/readable-description';
@@ -32,7 +34,12 @@ export function PracticalProjectsSection() {
             className="group relative flex flex-col gap-2 rounded-md border border-border bg-surface p-4 transition-colors hover:border-accent/50 w-full max-w-xl mx-auto sm:max-w-none"
           >
             <h3 className="text-body font-medium text-text transition-colors group-hover:text-accent">
-              {project.title}
+              <Link
+                href={`/case-study/${project.slug}`}
+                className="before:absolute before:inset-0 focus-visible:outline-none"
+              >
+                {project.title}
+              </Link>
             </h3>
             <span className="text-label text-text-muted">{project.category}</span>
             <ReadableDescription
@@ -51,29 +58,38 @@ export function PracticalProjectsSection() {
                 ))}
               </div>
             )}
-            <div className="mt-auto flex items-center gap-4 pt-3">
-              {project.liveUrl && (
-                <a
-                  href={project.liveUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex min-h-11 items-center py-2 text-small text-accent hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
-                >
-                  Live Site
-                  <span className="sr-only"> (opens in a new tab)</span>
-                </a>
-              )}
-              {project.githubUrl && (
-                <a
-                  href={project.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex min-h-11 items-center py-2 text-small text-text-secondary hover:text-text hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
-                >
-                  Source Code
-                  <span className="sr-only"> (opens in a new tab)</span>
-                </a>
-              )}
+            <div className="relative z-10 mt-auto flex items-center justify-between pt-3">
+              <div className="flex items-center gap-4">
+                {project.liveUrl && (
+                  <a
+                    href={project.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex min-h-11 items-center py-2 text-small text-accent hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+                  >
+                    Live Site
+                    <span className="sr-only"> (opens in a new tab)</span>
+                  </a>
+                )}
+                {project.githubUrl && (
+                  <a
+                    href={project.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex min-h-11 items-center py-2 text-small text-text-secondary hover:text-text hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+                  >
+                    Source Code
+                    <span className="sr-only"> (opens in a new tab)</span>
+                  </a>
+                )}
+              </div>
+              <Link
+                href={`/case-study/${project.slug}`}
+                className="inline-flex min-h-11 items-center py-2 font-mono text-label uppercase tracking-[0.06em] text-text-muted transition-colors group-hover:text-accent hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+                aria-label={`Read case study for ${project.title}`}
+              >
+                Article &rarr;
+              </Link>
             </div>
           </div>
         ))}
